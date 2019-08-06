@@ -1,14 +1,14 @@
 /**
 ******************************************************************************
-  * @file       main.c
-  * @brief      主程序源文件
-  * @version    1.1
+  * @file       time.c
+  * @brief      简单计时函数源文件
+  * @version    1.0
   * @date       Tue 06-08-2019
 ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
+#include "time.h"
 
 /** @addtogroup 
   * @{
@@ -20,47 +20,30 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-
-/**
-  * @brief  Main function
-  * @param  NULL
-  * @return NULL
-  */
-int main(void)
-{
-	LED_Init();
-	
-	USART1_Init(115200);
-	USART_Cmd(USART1,ENABLE);
-	
-	LED2_OFF();
-	LED3_ON();
-	while(1)
-	{
-		Delay(500);
-		LED2_ON();
-		LED3_ON();
-		Delay(500);
-		LED2_OFF();
-		LED3_OFF();
-		
-		printf("Hello World!\r\n");
-	}
-}
-
 /* Exported functions --------------------------------------------------------*/
 
-//Redirect fputc function
-int fputc(int ch,FILE *stream)
+/**
+  * @brief  简单延时函数
+  * @note   72MHz
+  * @param  延时时间
+  * @return NULL
+  */
+void Delay(u32 t)
 {
-	USART_SendData(USART1,ch);
-	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
+	u32 i,j;
+	while(t--)
 	{
+		for(i = 0;i < 100;i++)
+		{
+			for(j = 0;j < 100;j++)
+			{
+			}
+		}
 	}
 	
-	return ch;
+	return ;
 }
-    
+
 /**
   * @}
   */
