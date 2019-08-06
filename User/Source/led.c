@@ -1,15 +1,15 @@
 /**
 ******************************************************************************
-  * @file       main.c
-  * @brief      主程序源文件
-  * @version    1.1
+  * @file       led.c
+  * @brief      LED相关函数源文件
+  * @version    1.0
   * @date       Tue 06-08-2019
 ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
-
+#include "led.h"
+ 
 /** @addtogroup 
   * @{
   */
@@ -20,47 +20,34 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
 
 /**
-  * @brief  Main function
+  * @brief  LED初始化函数
   * @param  NULL
   * @return NULL
   */
-int main(void)
+void LED_Init(void)
 {
-	LED_Init();
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	/* GPIOB Periph clock enable */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+	/* Configure PB6 and PB8 in output pushpull mode */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	/* Reset pin */
+	GPIO_ResetBits(GPIOB, GPIO_Pin_8);
+	GPIO_ResetBits(GPIOB, GPIO_Pin_8);
 	
-	USART1_Init(115200);
-	USART_Cmd(USART1,ENABLE);
-	
-	LED2_OFF();
-	LED3_ON();
-	while(1)
-	{
-		Delay(500);
-		LED2_ON();
-		LED3_ON();
-		Delay(500);
-		LED2_OFF();
-		LED3_OFF();
-		
-		printf("Hello World!\r\n");
-	}
+	return ;
 }
 
-/* Exported functions --------------------------------------------------------*/
 
-//Redirect fputc function
-int fputc(int ch,FILE *stream)
-{
-	USART_SendData(USART1,ch);
-	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
-	{
-	}
-	
-	return ch;
-}
-    
 /**
   * @}
   */

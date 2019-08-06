@@ -1,2 +1,4 @@
-# Smartlock
-Base on stm32 std lib
+# Smart lock project
+===========================
+
+Project was based on STM32 Standard Library 3.5.0
