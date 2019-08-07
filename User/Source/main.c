@@ -33,8 +33,14 @@ int main(void)
 	USART1_Init(115200);
 	USART_Cmd(USART1,ENABLE);
 	
+	Voicemodule_Init();
+	delay_ms(500);//µÈ´ýÎÈ¶¨
+	
 	LED2_OFF();
 	LED3_ON();
+	
+	Voice_SendData(VoiceCmd_CHANGE_ADMIN_PASSWORD);
+	
 	while(1)
 	{
 		Delay(500);
@@ -45,6 +51,9 @@ int main(void)
 		LED3_OFF();
 		
 		printf("Hello World!\r\n");
+		
+		Delay(5000);
+		Voice_SendData(VoiceCmd_CHANGE_ADMIN_PASSWORD);
 	}
 }
 

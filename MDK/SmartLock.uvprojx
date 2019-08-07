@@ -544,6 +544,16 @@
               <FileType>1</FileType>
               <FilePath>..\User\Source\uart.c</FilePath>
             </File>
+            <File>
+              <FileName>systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Source\systick.c</FilePath>
+            </File>
+            <File>
+              <FileName>voice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Source\voice.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1095,6 +1105,16 @@
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Source\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Source\systick.c</FilePath>
+            </File>
+            <File>
+              <FileName>voice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Source\voice.c</FilePath>
             </File>
           </Files>
         </Group>
