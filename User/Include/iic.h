@@ -1,35 +1,45 @@
 /**
 ******************************************************************************
-  * @file       led.h
-  * @brief      LED相关函数头文件
+  * @file       iic.h
+  * @brief      
   * @version    1.0
-  * @date       Tue 06-08-2019
+  * @date       Wed 07-08-2019
 ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __LED_H
-#define __LED_H
+#ifndef __IIC_H
+#define __IIC_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
+#include "systick.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+#define NOP_TIME		4	
 /* Exported macro ------------------------------------------------------------*/
-#define LED3_OFF() (GPIO_SetBits(GPIOB, GPIO_Pin_6))
-#define LED3_ON() (GPIO_ResetBits(GPIOB, GPIO_Pin_6))
-	 
+//SCK PB4 SDA PB5
+#define SDA_Status()	(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_5))
+#define SCK_H()			(GPIO_SetBits(GPIOB,GPIO_Pin_4))
+#define SCK_L()			(GPIO_ResetBits(GPIOB,GPIO_Pin_4))
+#define SDA_H()			(GPIO_SetBits(GPIOB,GPIO_Pin_5))
+#define SDA_L()			(GPIO_ResetBits(GPIOB,GPIO_Pin_5))
 
-#define LED2_OFF() (GPIO_SetBits(GPIOB, GPIO_Pin_8))
-#define LED2_ON() (GPIO_ResetBits(GPIOB, GPIO_Pin_8))
 
 /* Exported functions ------------------------------------------------------- */
-void LED_Init(void);
-
+void IIC_Software_Init(void);
+void IIC_Start(void);
+void IIC_Stop(void);
+void IIC_SendACK(void);
+void IIC_SendNoACK(void);
+u8 IIC_CheckACK(void);
+void IIC_SendByte(u8 data);
+u8 IIC_RecvByte(u8 End);
+	 
 #ifdef __cplusplus
 }
 #endif

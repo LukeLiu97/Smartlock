@@ -28,8 +28,13 @@
   * @{
   */
 
+/* Extern variables ----------------------------------------------------------*/
+extern u16 gTouchStatus;
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+//#define SHOW_TOUCHSTATUS
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -142,6 +147,45 @@ void SysTick_Handler(void)
 /*  available peripheral interrupt handler's name please refer to the startup */
 /*  file (startup_stm32f10x_xx.s).                                            */
 /******************************************************************************/
+
+/**
+  * @brief  This function handles External line 0 interrupt request.
+  * @param  None
+  * @retval None
+  */
+void EXTI3_IRQHandler(void)
+{
+	if(EXTI_GetITStatus(EXTI_Line3) != RESET)
+	{
+		/* Interrupt task */
+		LED3_ON();
+		
+		gTouchStatus = MPR_TouchStatus();
+
+		if(gTouchStatus == 0)
+		{
+#if (defined DEBUG) && (defined SHOW_TOUCHSTATUS)
+			printf("gTouchStatus = %#X\r\n",gTouchStatus);
+			printf("Key release\r\n");
+#endif
+		}
+		else
+		{
+#if (defined DEBUG) && (defined SHOW_TOUCHSTATUS)		
+			printf("gTouchStatus = %#X\r\n",gTouchStatus);
+#endif
+		}
+		
+		MPR_TouchStatus();
+
+		/* Clear the  EXTI line 3 pending bit */
+		EXTI_ClearITPendingBit(EXTI_Line3);
+	}
+	else
+	{
+	}
+}
+
 
 /**
   * @brief  This function handles PPP interrupt request.

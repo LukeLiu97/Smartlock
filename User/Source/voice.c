@@ -21,7 +21,7 @@
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-void Voicemodule_Init(void)
+void VoiceModule_Init(void)
 {
 	/* GPIO 初始化 VOICE_DATA PB0 VOICE_BUSY PB1 */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
@@ -47,7 +47,7 @@ void Voicemodule_Init(void)
 	return ;
 }
 
-void Voice_SendData(u8 data)
+void Voice_Play(VoiceCmd_TypeDef VoiceCmd)
 {
 	/* 等待空闲总线 */
 	while((GPIOB->IDR & (0x1 << 1)) != 0)
@@ -64,7 +64,7 @@ void Voice_SendData(u8 data)
 	for(u32 i = 0;i < 8;i++)
 	{
 		// MSB
-		if((data & (0x1 << (7 - i))) != 0)
+		if((VoiceCmd & (0x1 << (7 - i))) != 0)
 		{
 			GPIO_SetBits(GPIOB,GPIO_Pin_0);
 			delay_us(1500);

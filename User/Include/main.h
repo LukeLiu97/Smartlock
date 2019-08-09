@@ -18,13 +18,17 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 #include <stdio.h>
+#include <string.h>
 #include "systick.h"
 	 
 #include "led.h"
 #include "time.h"
 #include "uart.h"
 #include "voice.h"
-
+#include "iic.h"
+#include "mpr121.h"
+#include "key.h"
+	 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/

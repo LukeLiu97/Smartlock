@@ -1,15 +1,15 @@
 /**
 ******************************************************************************
-  * @file       led.h
-  * @brief      LED相关函数头文件
+  * @file       key.h
+  * @brief      按键相关函数头文件
   * @version    1.0
-  * @date       Tue 06-08-2019
+  * @date       Thu 08-08-2019
 ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __LED_H
-#define __LED_H
+#ifndef __KEY_H
+#define __KEY_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -17,18 +17,18 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 
+//#ifdef __MPR121_H
+#include "mpr121.h"
+//#endif	 
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-#define LED3_OFF() (GPIO_SetBits(GPIOB, GPIO_Pin_6))
-#define LED3_ON() (GPIO_ResetBits(GPIOB, GPIO_Pin_6))
-	 
-
-#define LED2_OFF() (GPIO_SetBits(GPIOB, GPIO_Pin_8))
-#define LED2_ON() (GPIO_ResetBits(GPIOB, GPIO_Pin_8))
+#define MPR_IRQ() (!!GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_3))
 
 /* Exported functions ------------------------------------------------------- */
-void LED_Init(void);
+void Key_Init(void);
+u8 Key_Scan(void);
 
 #ifdef __cplusplus
 }
