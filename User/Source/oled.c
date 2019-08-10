@@ -1,0 +1,285 @@
+/**
+******************************************************************************
+  * @file       oled.c
+  * @brief      
+  * @version    1.0
+  * @date       Aug-09-2019 Fri
+******************************************************************************
+  */
+
+/* Includes ------------------------------------------------------------------*/
+#include "oled.h"
+
+/** @addtogroup SPI peri
+  * @{
+  */
+
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+
+#define OLED_DC_H()			(GPIO_SetBits(GPIOA,GPIO_Pin_11))
+#define OLED_DC_L()			(GPIO_ResetBits(GPIOA,GPIO_Pin_11))
+#define OLED_RES_H()		(GPIO_SetBits(GPIOA,GPIO_Pin_12))
+#define OLED_RES_L()		(GPIO_ResetBits(GPIOA,GPIO_Pin_12))
+#define OLED_CS_H()			(GPIO_SetBits(GPIOA,GPIO_Pin_15))
+#define OLED_CS_L()			(GPIO_ResetBits(GPIOA,GPIO_Pin_15))
+
+/* Private variables ---------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
+
+void OLED_Init(void)
+{
+	/*
+		GPIO 配置
+		OLED_CS PA15 (需要重映射) OLED_DC PA11 OLED_RES PA12  
+	*/
+	
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	/* GPIOA Periph clock enable */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+	/* Configure PA11 and PA12 , PA15 in output pushpull mode */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	
+	/* 
+		GPIO 复用为 SPI2
+		SPI_MOSI PB15 SPI_MISO PB14 SPI_SCLK PB13 
+	*/
+	
+	/* GPIOB Periph clock enable */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	
+	/* Configure PB13 and PB14 , PB15 in   mode */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	
+	
+	/* Configure PB14 in   mode */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14 ;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	
+	/* SPI2 mode Setting */
+	SPI_InitTypeDef  SPI_InitStructure;
+	
+	 /* SPI2 Periph clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+	
+	/* SPI2 configuration ------------------------------------------------------*/
+	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+	SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
+	SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
+	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
+	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+	SPI_InitStructure.SPI_CRCPolynomial = 7;
+	SPI_Init(SPI2, &SPI_InitStructure);
+	
+	/* SPI2 enable -------------------------------------------------------------*/
+	SPI_Cmd(SPI2,ENABLE);
+	
+	/* GPIO准备 */
+	OLED_CS_H();
+	OLED_RES_H();
+	
+	return ;
+}
+
+u8 SPI_Write_Read(u8 SendData)
+{
+	u8 RecvData;
+	
+	/* 等待发送寄存器为空 */
+	while(SPI_I2S_GetFlagStatus(SPI2,SPI_I2S_FLAG_TXE) == RESET)
+	{
+	}
+	/* 发送数据 */
+	SPI_I2S_SendData(SPI2,SendData);
+	
+	/* 等待接受寄存器非空 */
+	while(SPI_I2S_GetFlagStatus(SPI2,SPI_I2S_FLAG_RXNE) == RESET)
+	{
+	}
+	/* 接收数据 */
+	RecvData = SPI_I2S_ReceiveData(SPI2);
+
+	return RecvData;
+}
+
+
+void OLED_SendCmd(u8 Cmd)
+{
+	/* 选择OLED 为从设备 */
+	OLED_CS_L();
+	
+	/* 指示OLED读取命令 */
+	OLED_DC_L();
+	
+	SPI_Write_Read(Cmd);
+	
+	/* 放弃总线控制权 */
+	OLED_CS_H();
+	
+	return ;
+}
+
+void OLED_SendData(u8 Data)
+{
+	/* 选择OLED 为从设备 */
+	OLED_CS_L();
+	
+	/* 指示OLED读取数据 */
+	OLED_DC_H();
+	
+	SPI_Write_Read(Data);
+	
+	/* 放弃总线控制权 */
+	OLED_CS_H();
+	
+	return ;
+}
+
+void OLED_Config(void)
+{
+	OLED_RES_L();
+	delay_ms(100);
+	OLED_RES_H();  
+	delay_ms(100);  //复位
+
+	OLED_SendCmd(0xAE); //关闭显示
+	OLED_SendCmd(0xD5); //设置时钟分频因子,震荡频率
+	OLED_SendCmd(80);   //[3:0],分频因子;[7:4],震荡频率
+	OLED_SendCmd(0xA8); //设置驱动路数
+	OLED_SendCmd(0X3F); //默认0X3F(1/64)
+	OLED_SendCmd(0xD3); //设置显示偏移
+	OLED_SendCmd(0X00); //默认为0
+
+	OLED_SendCmd(0x40); //设置显示开始行 [5:0],行数.
+
+	OLED_SendCmd(0x8D); //电荷泵设置
+	OLED_SendCmd(0x14); //bit2，开启/关闭
+	OLED_SendCmd(0x20); //设置内存地址模式
+	OLED_SendCmd(0x02); //[1:0],00，列地址模式;01，行地址模式;10,页地址模式;默认10;
+	OLED_SendCmd(0xA1); //段重定义设置,bit0:0,0->0;1,0->127;
+	OLED_SendCmd(0xC8); //设置COM扫描方向;bit3:0,普通模式;1,重定义模式 COM[N-1]->COM0;N:驱动路数
+	OLED_SendCmd(0xDA); //设置COM硬件引脚配置
+	OLED_SendCmd(0x12); //[5:4]配置
+
+	OLED_SendCmd(0x81); //对比度设置
+	OLED_SendCmd(0xEF); //1~255;默认0X7F (亮度设置,越大越亮)
+	OLED_SendCmd(0xD9); //设置预充电周期
+	OLED_SendCmd(0xf1); //[3:0],PHASE 1;[7:4],PHASE 2;
+	OLED_SendCmd(0xDB); //设置VCOMH 电压倍率
+	OLED_SendCmd(0x30); //[6:4] 000,0.65*vcc;001,0.77*vcc;011,0.83*vcc;
+
+	OLED_SendCmd(0xA4); //全局显示开启;bit0:1,开启;0,关闭;(白屏/黑屏)
+	OLED_SendCmd(0xA6); //设置显示方式;bit0:1,反相显示;0,正常显示
+	OLED_SendCmd(0xAF); //开启显示
+	
+	return ;
+}
+
+void OLED_SetLocation(u8 x ,u8 y)	//设置显示位置 x 时列（0-127列）  y是行（0-7）一行8个点
+{
+	OLED_SendCmd(0XB0+y);				//设置行Y  0-7 行
+	
+	OLED_SendCmd(0X00+(x & 0X0F));		//低4位   
+	OLED_SendCmd(0X10+((x & 0XF0)>>4));	//高4位
+	
+}
+
+//OLED画点
+void OLED_Draw_Point(u8 x,u8 y) //x : 0-127  y : 0-63
+{
+	OLED_SendCmd(0x00+x);					//发送命令，设置Y轴坐标
+	OLED_SendData(0x10+((x & 0x0F)>>4));		//发送坐标高4位
+	OLED_SendData(0x00+(x & 0x0F));					//发送坐标低4位
+
+	
+	OLED_SendCmd(0xB0+y);					//发送命令，设置Y轴坐标
+	OLED_SendData(0x10+((y & 0x0F)>>4));		//发送坐标高4位
+	OLED_SendData(0x00+(y & 0x0F));					//发送坐标低4位
+
+	return ;
+}
+
+//清屏
+void OLED_Clear(void)
+{
+	u8 i,j;
+	for(j=0;j<8;j++)
+	{
+		OLED_SetLocation(0 ,j);
+		
+		for(i = 0;i < 128 ;i++)
+		{
+			OLED_SendData(0x00);
+		}
+	}
+	
+	return ;
+}
+
+void OLED_HalfWidthCharacter(u8 Column,u8 Row)
+{
+	// 0 <= Column < 16
+	// 0 <= Row    < 4
+	u8 i;
+	
+	OLED_SetLocation(Column * 8 ,Row * 2);
+		
+	for(i = 0;i < 8 ;i++)
+	{
+		OLED_SendData(0xFF);
+	}
+	OLED_SetLocation(Column * 8 ,Row * 2 + 1);
+	for(i = 0;i < 8 ;i++)
+	{
+		OLED_SendData(0xFF);
+	}
+	
+	return ;
+}
+
+void OLED_FullWidthCharacter(u8 Column,u8 Row)
+{
+	 u8 Char_16x16[2][16] =
+		{
+			0x40,0x42,0xCC,0x00,0x00,0x44,0x54,0x54,0x54,0x7F,0x54,0x54,0x54,0x44,0x40,0x00,
+			0x00,0x00,0x7F,0x20,0x10,0x00,0xFF,0x15,0x15,0x15,0x55,0x95,0x7F,0x00,0x00,0x00
+		};/*"请",0*//* (16 X 16 , 宋体 )*/
+	
+	// 0 <= Column < 15
+	// 0 <= Row    < 3
+	u8 i;
+	
+	OLED_SetLocation(Column * 8 ,Row * 2);	
+	for(i = 0;i < 16 ;i++)
+	{
+		OLED_SendData(Char_16x16[0][i]);
+	}
+	OLED_SetLocation(Column * 8 ,Row * 2 + 1);
+	for(i = 0;i < 16 ;i++)
+	{
+		OLED_SendData(Char_16x16[1][i]);
+	}
+	
+	return ;
+}
+
+/**
+  * @}
+  */
