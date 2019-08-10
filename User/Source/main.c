@@ -2,8 +2,9 @@
 ******************************************************************************
   * @file       main.c
   * @brief      主程序源文件
-  * @version    1.1
-  * @date       Tue 06-08-2019
+  * @version    0.6
+  * @date       Aug-10-2019 Sat
+  * @update     添加OLED Drive
 ******************************************************************************
   */
 
@@ -26,6 +27,7 @@ u8 Password[] = "201988";
 u8 StringBuff[BUFF_LENGTH] = {0};
 
 /* Private function prototypes -----------------------------------------------*/
+static void JTAG_Disable(void);
 static void Password_Input(void);
 static u8 Password_Check(void);
 
@@ -42,10 +44,13 @@ s32 String_ViolentMatch(const u8 *TargetString,const u8 *MatchingString);
   */
 int main(void)
 {
+	/* IIC 和 OLED 使用JTAG引脚需要重映射 */
+	JTAG_Disable();
+	
 	LED_Init();
 	
-	LED2_ON();
-	LED3_ON();
+	LED2_OFF();
+	LED3_OFF();
 	
 	USART1_Init(115200);
 	USART_Cmd(USART1,ENABLE);
@@ -60,11 +65,26 @@ int main(void)
 #ifdef DEBUG
 		printf("\r\nDebug mode\r\n");
 #endif	
+
+	OLED_Init();
+	OLED_Config();
+	OLED_Clear();
 	
 	Voice_Play( VoiceCmd_INPUT_ADMIN_PASSWORD);
 	
 	while(1)
 	{
+		
+		for(u32 i = 0;i < 4;i++)
+		{
+			for(u32 j = 0;j < 16;j+=2)
+			{
+				OLED_FullWidthCharacter(j,i);
+				Delay(500);
+			}
+		}
+		OLED_Clear();
+		
 		Password_Input();
 		
 #ifdef DEBUG
@@ -74,16 +94,26 @@ int main(void)
 		if(Password_Check() == 1)
 		{
 			printf("Password right\r\n");
-			Voice_Play(VoiceCmd_DOOROPEN_SUCCESS);
+//			Voice_Play(VoiceCmd_DOOROPEN_SUCCESS);
 		}
 		else
 		{
 			printf("Password wrong\r\n");
-			Voice_Play(VoiceCmd_PASSWORD_INCONFORMITY);
+//			Voice_Play(VoiceCmd_PASSWORD_INCONFORMITY);
 		}
+		OLED_Clear();
 
 	}
 }
+
+void JTAG_Disable(void)
+{
+	/* 重映射 */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);// 复位后才可再次重映射
+	return ;
+}
+
 
 void Password_Input(void)
 {
