@@ -1,37 +1,37 @@
 /**
 ******************************************************************************
-  * @file       oled.h
-  * @brief      
+  * @file       key.h
+  * @brief      按键相关函数头文件
   * @version    1.0
-  * @date       Aug-09-2019 Fri
+  * @date       Thu 08-08-2019
 ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __OLED_H
-#define __OLED_H
+#ifndef __KEY_H
+#define __KEY_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
-	 
-#include "systick.h"
+
+//#ifdef __MPR121_H
+#include "mpr121.h"
+//#endif	 
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
+#define MPR_IRQ() (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_3))
+
 /* Exported functions ------------------------------------------------------- */
+void Key_Init(void);
+u8 Key_Scan(void);
+void EXTI3_Init(void);
+void EXTI3_Disable(void);
 
-void OLED_Init(void);	 
-void OLED_Config(void);
-void OLED_Draw_Point(u8 x,u8 y);
-void OLED_Clear(void);	 
-
-void OLED_HalfWidthCharacter(u8 Column,u8 Row);
-void OLED_FullWidthCharacter(u8 Column,u8 Row);
-	 
 #ifdef __cplusplus
 }
 #endif

@@ -40,9 +40,9 @@ void LED_Init(void)
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-	/* Reset pin */
-	GPIO_ResetBits(GPIOB, GPIO_Pin_8);
-	GPIO_ResetBits(GPIOB, GPIO_Pin_8);
+	/* Set pin */
+	GPIO_SetBits(GPIOB, GPIO_Pin_8);
+	GPIO_SetBits(GPIOB, GPIO_Pin_8);
 	
 	return ;
 }

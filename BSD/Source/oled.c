@@ -233,52 +233,71 @@ void OLED_Clear(void)
 	return ;
 }
 
-void OLED_HalfWidthCharacter(u8 Column,u8 Row)
+// 每行占8的像素，视为屏幕行 Row 0~7 
+u8 OLED_Show_XxN8_Character(u8 Row,u8 Column,u8 RowHeight,u8 Width,const u8 *FontArray)
 {
-	// 0 <= Column < 16
-	// 0 <= Row    < 4
 	u8 i;
+	u8 CurrentRow = 0;
 	
-	OLED_SetLocation(Column * 8 ,Row * 2);
-		
-	for(i = 0;i < 8 ;i++)
+	while(CurrentRow < RowHeight)
 	{
-		OLED_SendData(0xFF);
-	}
-	OLED_SetLocation(Column * 8 ,Row * 2 + 1);
-	for(i = 0;i < 8 ;i++)
-	{
-		OLED_SendData(0xFF);
+		OLED_SetLocation(Column ,Row + CurrentRow);	
+		for(i = 0;i < Width ;i++)
+		{
+			OLED_SendData(((u8 (*)[Width])FontArray)[CurrentRow][i]);
+		}
+		CurrentRow++;
 	}
 	
-	return ;
+	return 0;
 }
 
-void OLED_FullWidthCharacter(u8 Column,u8 Row)
-{
-	 u8 Char_16x16[2][16] =
-		{
-			0x40,0x42,0xCC,0x00,0x00,0x44,0x54,0x54,0x54,0x7F,0x54,0x54,0x54,0x44,0x40,0x00,
-			0x00,0x00,0x7F,0x20,0x10,0x00,0xFF,0x15,0x15,0x15,0x55,0x95,0x7F,0x00,0x00,0x00
-		};/*"请",0*//* (16 X 16 , 宋体 )*/
-	
-	// 0 <= Column < 15
-	// 0 <= Row    < 3
-	u8 i;
-	
-	OLED_SetLocation(Column * 8 ,Row * 2);	
-	for(i = 0;i < 16 ;i++)
-	{
-		OLED_SendData(Char_16x16[0][i]);
-	}
-	OLED_SetLocation(Column * 8 ,Row * 2 + 1);
-	for(i = 0;i < 16 ;i++)
-	{
-		OLED_SendData(Char_16x16[1][i]);
-	}
-	
-	return ;
-}
+//void OLED_HalfWidthCharacter(u8 Column,u8 Row)
+//{
+//	// 0 <= Column < 16
+//	// 0 <= Row    < 4
+//	u8 i;
+//	
+//	OLED_SetLocation(Column * 8 ,Row * 2);
+//		
+//	for(i = 0;i < 8 ;i++)
+//	{
+//		OLED_SendData(0xFF);
+//	}
+//	OLED_SetLocation(Column * 8 ,Row * 2 + 1);
+//	for(i = 0;i < 8 ;i++)
+//	{
+//		OLED_SendData(0xFF);
+//	}
+//	
+//	return ;
+//}
+
+//void OLED_FullWidthCharacter(u8 Column,u8 Row)
+//{
+//	static u8 Char_16x16[2][16] =
+//	{
+//		0x40,0x42,0xCC,0x00,0x00,0x44,0x54,0x54,0x54,0x7F,0x54,0x54,0x54,0x44,0x40,0x00,
+//		0x00,0x00,0x7F,0x20,0x10,0x00,0xFF,0x15,0x15,0x15,0x55,0x95,0x7F,0x00,0x00,0x00
+//	};/*"请",0*//* (16 X 16 , 宋体 )*/
+//	
+//	// 0 <= Column < 15
+//	// 0 <= Row    < 3
+//	u8 i;
+//	
+//	OLED_SetLocation(Column * 8 ,Row * 2);	
+//	for(i = 0;i < 16 ;i++)
+//	{
+//		OLED_SendData(Char_16x16[0][i]);
+//	}
+//	OLED_SetLocation(Column * 8 ,Row * 2 + 1);
+//	for(i = 0;i < 16 ;i++)
+//	{
+//		OLED_SendData(Char_16x16[1][i]);
+//	}
+//	
+//	return ;
+//}
 
 /**
   * @}

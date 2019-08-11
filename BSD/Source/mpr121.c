@@ -165,7 +165,7 @@ u16 MPR_TouchStatus(void)
 {
 	u16 TouchStatus = 0;
 	TouchStatus = MPR_Read(MPR_ADD,0x01) << 8;
-	TouchStatus += MPR_Read(MPR_ADD,0x00);
+	TouchStatus |= MPR_Read(MPR_ADD,0x00);
 	
 	return TouchStatus;
 }

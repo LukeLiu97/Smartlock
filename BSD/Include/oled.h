@@ -1,42 +1,37 @@
 /**
 ******************************************************************************
-  * @file       main.h
-  * @brief      主程序头文件
-  * @note       起到global.h 的作用
-  * @version    1.1
-  * @date       Tue 06-08-2019
+  * @file       oled.h
+  * @brief      
+  * @version    1.0
+  * @date       Aug-09-2019 Fri
 ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef __OLED_H
+#define __OLED_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+	 
 #include "systick.h"
-	 
-#include "led.h"
-#include "time.h"
-#include "uart.h"
-#include "voice.h"
-#include "iic.h"
-#include "mpr121.h"
-#include "key.h"
-#include "oled.h"
-#include "font.h"
-	 
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
+void OLED_Init(void);	 
+void OLED_Config(void);
+void OLED_Draw_Point(u8 x,u8 y);
+void OLED_Clear(void);	 
+
+//u8 OLED_Show_Xx16_Character(u8 Row,u8 Column,u8 Width,const u8 *FontArray);
+u8 OLED_Show_XxN8_Character(u8 Row,u8 Column,u8 RowHeight,u8 Width,const u8 *FontArray);
+	 
 #ifdef __cplusplus
 }
 #endif
