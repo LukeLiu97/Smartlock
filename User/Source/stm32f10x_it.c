@@ -157,6 +157,7 @@ void EXTI3_IRQHandler(void)
 {
 	if(EXTI_GetITStatus(EXTI_Line3) != RESET)
 	{
+		NVIC_DisableIRQ(EXTI3_IRQn);
 		/* Interrupt task */
 		LED3_ON();
 		
@@ -180,6 +181,8 @@ void EXTI3_IRQHandler(void)
 
 		/* Clear the  EXTI line 3 pending bit */
 		EXTI_ClearITPendingBit(EXTI_Line3);
+		
+		NVIC_EnableIRQ(EXTI3_IRQn);
 	}
 	else
 	{

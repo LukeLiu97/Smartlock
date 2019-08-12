@@ -252,6 +252,24 @@ u8 OLED_Show_XxN8_Character(u8 Row,u8 Column,u8 RowHeight,u8 Width,const u8 *Fon
 	return 0;
 }
 
+void OLED_ShowPicture(u8 x,u8 y,u8 px,u8 py,const u8 *Picture)
+{
+	u8 i;
+	u8 CurrentRow = 0;
+	
+	while(CurrentRow < (py/8))
+	{
+		OLED_SetLocation(x ,(y / 8) + CurrentRow);	
+		for(i = 0;i < px ;i++)
+		{
+			OLED_SendData(((u8 (*)[px])Picture)[CurrentRow][i]);
+		}
+		CurrentRow++;
+	}
+	
+	return ;
+}
+
 //void OLED_HalfWidthCharacter(u8 Column,u8 Row)
 //{
 //	// 0 <= Column < 16

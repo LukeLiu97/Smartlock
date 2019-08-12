@@ -27,6 +27,7 @@ extern const u8 String2_16xN[10][16];
 extern const u8 Char_8x16[2][16];
 	 
 extern const u8 String3_16xN[8][16];
+extern const u8 Logo_72x64[8][72];
 	 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

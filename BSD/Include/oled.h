@@ -31,7 +31,8 @@ void OLED_Clear(void);
 
 //u8 OLED_Show_Xx16_Character(u8 Row,u8 Column,u8 Width,const u8 *FontArray);
 u8 OLED_Show_XxN8_Character(u8 Row,u8 Column,u8 RowHeight,u8 Width,const u8 *FontArray);
-	 
+
+void OLED_ShowPicture(u8 x,u8 y,u8 px,u8 py,const u8 *Picture);
 #ifdef __cplusplus
 }
 #endif

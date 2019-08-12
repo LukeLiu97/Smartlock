@@ -21,6 +21,11 @@
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+/**
+  * @brief  软件IIC初始化函数
+  * @param  NULL
+  * @return NULL
+  */
 void IIC_Software_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -43,6 +48,11 @@ void IIC_Software_Init(void)
 	return ;
 }
 
+/**
+  * @brief  设置SDA引脚为输入浮空状态
+  * @param  NULL
+  * @return NULL
+  */
 void SDA_IN(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -56,6 +66,11 @@ void SDA_IN(void)
 	return ;
 }
 
+/**
+  * @brief  设置SDA引脚为推挽状态
+  * @param  NULL
+  * @return NULL
+  */
 void SDA_OUT(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -69,6 +84,11 @@ void SDA_OUT(void)
 	return ;
 }
 
+/**
+  * @brief  生成IIC起始信号
+  * @param  NULL
+  * @return NULL
+  */
 void IIC_Start(void)
 {
 	SDA_OUT();
@@ -85,6 +105,11 @@ void IIC_Start(void)
 	return ;
 }
 
+/**
+  * @brief  生成IIC结束信号
+  * @param  NULL
+  * @return NULL
+  */
 void IIC_Stop(void)
 {
 	SDA_OUT();
@@ -101,6 +126,11 @@ void IIC_Stop(void)
 	return ;
 }
 
+/**
+  * @brief  IIC接受方应答信号
+  * @param  NULL
+  * @return NULL
+  */
 void IIC_SendACK(void)
 {
 	SDA_OUT();//接受方应答准备
@@ -119,6 +149,11 @@ void IIC_SendACK(void)
 	return ;
 }
 
+/**
+  * @brief  IIC接受方生成未应答信号
+  * @param  NULL
+  * @return NULL
+  */
 void IIC_SendNoACK(void)
 {
 	SDA_OUT();
@@ -135,6 +170,13 @@ void IIC_SendNoACK(void)
 	return ;
 }
 
+/**
+  * @brief  IIC发送方确认ACK状态
+  * @param  NULL
+  * @return 应答状态
+  *     value 0 应答超时
+  *     value 1 应答
+  */
 u8 IIC_CheckACK(void)
 {
 	u8 Count = 0;
@@ -160,6 +202,11 @@ u8 IIC_CheckACK(void)
 	return 1;
 }
 
+/**
+  * @brief  
+  * @param  NULL
+  * @return NULL
+  */
 void IIC_SendByte(u8 data)
 {
 	SDA_OUT();

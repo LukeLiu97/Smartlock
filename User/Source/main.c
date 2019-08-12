@@ -58,6 +58,7 @@ int main(void)
 {
 	u8 AdminFlag = 0;
 	
+	/* 禁止外部中断 */
 	NVIC_DisableIRQ(EXTI3_IRQn);
 	
 	/* IIC 和 OLED 使用JTAG引脚需要重映射 */
@@ -93,7 +94,7 @@ int main(void)
 	EXTI3_Init();
 	
 	/* 等待系统稳定 */
-	delay_ms(500);//等待稳定
+	//delay_ms(500);//等待稳定
 	
 	while(1)
 	{
@@ -105,6 +106,9 @@ int main(void)
 		}
 		else
 		{
+			OLED_ShowPicture(28,0,72,64,&(Logo_72x64[0][0]));
+			Delay(1000);
+			OLED_Clear();
 			User_Mode();
 		}
 
@@ -330,10 +334,11 @@ u8 Admin_Check(void)
 {
 	u32 i = 0;
 
-	Delay(1000);
+	Delay(100);
 	printf("MPR_IRQ = %d\r\n",MPR_IRQ());
 	gTouchStatus = MPR_TouchStatus();
 	printf("TouchStatus = %#x\r\n",gTouchStatus);
+	
 	while(1)
 	{
 		Delay(100);
