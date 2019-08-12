@@ -1,49 +1,51 @@
 /**
 ******************************************************************************
-  * @file       main.h
-  * @brief      主程序头文件
-  * @note       起到global.h 的作用
-  * @version    1.1
-  * @date       Tue 06-08-2019
+  * @file       ui.h
+  * @brief      User Interface hearder
+  * @version    1.0
+  * @date       Aug-12-2019 Mon
 ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef __UI_H
+#define __UI_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
+	 
 #include "systick.h"
-	 
-#include "led.h"
 #include "time.h"
-#include "uart.h"
+#include "led.h"
 #include "voice.h"
-#include "iic.h"
-#include "mpr121.h"
-#include "key.h"
 #include "oled.h"
+#include "key.h"
 #include "font.h"
-	 
-#include "ui.h"
 	 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+typedef enum
+{
+	WindowMode_AllClear = 0,
+	WindowMode_Admin	= 1,
+	WindowMode_User		= 2
+}WindowMode_TypeDef;
+
+#define BUFF_LENGTH 256  // 定义输入缓冲区状态
 
 /* Exported macro ------------------------------------------------------------*/
-
 /* Exported functions ------------------------------------------------------- */
 
-u8 Admin_Check(void);
-void Password_Input(void);
+void Window_MainTask(u8 *WindowMode);
 
+/* Extern variables ----------------------------------------------------------*/
+extern u16 gTouchStatus;
+	 
 #ifdef __cplusplus
 }
 #endif

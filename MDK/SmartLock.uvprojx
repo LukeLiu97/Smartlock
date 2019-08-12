@@ -394,6 +394,11 @@
               <FileType>1</FileType>
               <FilePath>..\User\Source\stm32f10x_it.c</FilePath>
             </File>
+            <File>
+              <FileName>ui.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Source\ui.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
