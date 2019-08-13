@@ -594,6 +594,11 @@
               <FileType>1</FileType>
               <FilePath>..\BSD\Source\tim.c</FilePath>
             </File>
+            <File>
+              <FileName>finger.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\finger.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

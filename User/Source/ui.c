@@ -36,6 +36,9 @@ extern u8 Admin_Check(void);
 static void Admin_Mode(void);
 static void User_Mode(void);
 
+void ArrayForward(u8 *Array,u8 Length);
+void ArrayBackward(u8 *Array,u8 Length);
+
 static void Password_Input(void);
 static u8 Password_Check(void);
 static s32 String_ViolentMatch(const u8 *TargetString,const u8 *MatchingString);
@@ -175,6 +178,52 @@ void Password_Input(void)
 	return ;
 }
 
+
+u8 Menu_Move(u8 *MenuList,u8 MenuListLenth)
+{
+	u8 KeyValue;
+	
+	LED3_OFF();
+		
+	KeyValue = Key_Scan();
+		
+	if(KeyValue != 0)/* 电容模块检测到按键变化 */
+	{
+#ifdef DEBUG
+		printf("KeyValue = %c\r\n",KeyValue);
+#endif
+			
+		Voice_Play(VoiceCmd_Di);
+		
+		if(KeyValue == '#')
+		{
+			return MenuPlace_Check;
+		}
+		else if(KeyValue == '*')
+		{
+			return MenuPlace_Back;
+		}
+		else if(KeyValue == '2')
+		{
+			ArrayForward(MenuList,MenuListLenth);
+			return MenuPlace_Shift;
+			
+		}
+		else if(KeyValue == '8')
+		{
+			ArrayBackward(MenuList,MenuListLenth);
+			return MenuPlace_Shift;
+		}
+		else
+		{
+		}
+	}
+	else
+	{
+	}
+	
+	return MenuPlace_NoEnter;;
+}
 
 
 u8 Password_Check(void)
@@ -370,7 +419,7 @@ void User_Mode(void)
 	return ;
 }
 
-void Menu_Mode(void)
+void Menu_Start(void)
 {
 	const u8 *Str[4] = 
 	{
@@ -383,67 +432,64 @@ void Menu_Mode(void)
 	
 	static u8 CurrentPlace[4] = {0,1,2,3};
 	
+	switch (Menu_Move(CurrentPlace,4))
+	{
+		case MenuPlace_Check:
+			OLED_Clear();
+			break;
+		case MenuPlace_Back:
+			OLED_Clear();
+			CurrentWindowMode = WindowMode_User;
+			break;
+		case MenuPlace_Shift:
+			OLED_Clear();
+			break;
+		default:
+			break;
+	}
+	
 	OLED_ShowMenuRow(0,2);
 	OLED_ShowString(2,2,0,Str[CurrentPlace[0]],StrLenArray[CurrentPlace[0]]);
 	ReversalFlag = 1;
 	OLED_ShowString(4,2,0,Str[CurrentPlace[1]],StrLenArray[CurrentPlace[1]]);
 	ReversalFlag = 0;
 	OLED_ShowString(6,2,0,Str[CurrentPlace[2]],StrLenArray[CurrentPlace[2]]);
+	
+	return ;
+}
 
+void Menu_Mute(void)
+{
+	const u8 *Str[2] = 
+	{
+		&(MenuString1_16x16[0][0]),
+		&(MenuString2_16x16[0][0])
+	};
+	const u8 StrLenArray[2] = {2,2};
 	
-	u8 KeyValue;
+	static u8 CurrentPlace[2] = {0,1};
 	
-//	while(1)
-//	{
-		LED3_OFF();
-		
-		if(CurrentWindowMode == WindowMode_AllClear)
-		{
-			return ;
-		}
-		else
-		{
-		}
-		
-		
-		KeyValue = Key_Scan();
-			
-		if(KeyValue != 0)/* 电容模块检测到按键变化 */
-		{
-#ifdef DEBUG
-			printf("KeyValue = %c\r\n",KeyValue);
-#endif
-			
-			Voice_Play(VoiceCmd_Di);
-			
-			if(KeyValue == '#')
-			{
-				
-			}
-			else if(KeyValue == '*')
-			{
-				CurrentWindowMode = WindowMode_User;
-				OLED_Clear();
-			}
-			else if(KeyValue == '2')
-			{
-				ArrayForward(CurrentPlace,4);
-				OLED_Clear();
-			}
-			else if(KeyValue == '8')
-			{
-				ArrayBackward(CurrentPlace,4);
-			
-				OLED_Clear();
-			}
-			else
-			{
-			}
-		}
-		else
-		{
-		}
-//	}
+	switch (Menu_Move(CurrentPlace,4))
+	{
+		case MenuPlace_Check:
+			OLED_Clear();
+			break;
+		case MenuPlace_Back:
+			OLED_Clear();
+			CurrentWindowMode = WindowMode_User;
+			break;
+		case MenuPlace_Shift:
+			OLED_Clear();
+			break;
+		default:
+			break;
+	}
+	
+	OLED_ShowMenuRow(0,2);
+	ReversalFlag = 1;
+	OLED_ShowString(2,2,0,Str[CurrentPlace[0]],StrLenArray[CurrentPlace[0]]);
+	ReversalFlag = 0;
+	OLED_ShowString(4,2,0,Str[CurrentPlace[1]],StrLenArray[CurrentPlace[1]]);
 	
 	return ;
 }
@@ -483,7 +529,7 @@ void Window_UserMode(void)
 
 void Window_SettingMode(void)
 {
-	Menu_Mode();
+	Menu_Start();
 	
 	return ;
 }

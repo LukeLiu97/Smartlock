@@ -16,6 +16,7 @@
 #endif
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
+#include "tim.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -23,6 +24,9 @@
 /* Exported functions ------------------------------------------------------- */
 
 void USART1_Init(u32 BaudRate);
+void USART2_Init(u32 BaudRate);
+
+void UART2_SendByte(u8 Data); 
 
 #ifdef __cplusplus
 }

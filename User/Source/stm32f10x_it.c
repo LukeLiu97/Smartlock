@@ -33,6 +33,11 @@ extern u16 gTouchStatus;
 extern u8 CurrentWindowMode;
 extern u32 UnBusy_Count;
 
+extern u8 FingerPack[8];
+extern u8 FingerPackCount;
+extern u8 FingerPackOver;
+
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 //#define SHOW_TOUCHSTATUS
@@ -211,16 +216,53 @@ void TIM3_IRQHandler(void)
 		/* Intertupt task */
 		LED2_OR();
 		
-		if(UnBusy_Count > 12)
+		if(UnBusy_Count > 12 && CurrentWindowMode != WindowMode_Setting)
 		{
 			CurrentWindowMode = WindowMode_AllClear;
-			printf("Free status\r\n");
+			
+			if(UnBusy_Count > 30)
+			{
+				printf("Free status\r\n");
+				UnBusy_Count = 20;
+			}
+			else if(UnBusy_Count > 15)
+			{
+				printf("Free status\r\n");
+			}
+			else
+			{
+			}
 		}
 		else
 		{
 			UnBusy_Count ++;
 		}
 		
+		
+	}
+}
+
+void USART2_IRQHandler(void)
+{
+	if(USART_GetFlagStatus(USART2,USART_FLAG_RXNE) == SET)
+	{
+		FingerPack[FingerPackCount++] = USART_ReceiveData(USART2);
+		
+		if(FingerPack[0] != 0x6C)// 接受起始码不吻合
+		{
+			FingerPackCount = 0;
+		}
+		else
+		{
+			 if(FingerPackCount == 8)
+			 {
+				 FingerPackCount = 0;
+				 FingerPackOver = 1;
+			 }
+		}
+	}
+	else
+	{
 		
 	}
 }

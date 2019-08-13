@@ -21,6 +21,10 @@ u8 CurrentWindowMode = WindowMode_AllClear;
 
 u32 UnBusy_Count = 0;
 
+u8 FingerPack[8] 	= {0};
+u8 FingerPackCount = 0;
+u8 FingerPackOver = 0;
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -29,9 +33,8 @@ u32 UnBusy_Count = 0;
 /* Private function prototypes -----------------------------------------------*/
 static void JTAG_Disable(void);
 
-//extern void OLED_ShowTextBox(u8 CowNumber,u8 CowHeight,u8 *Str);
-
-
+void Fingerprint_NewTask(void);
+	
 /* Private functions ---------------------------------------------------------*/
 
 /**
@@ -52,7 +55,6 @@ int main(void)
 	
 	/* 初始化串口，便于调试 */
 	USART1_Init(115200);
-	USART_Cmd(USART1,ENABLE);
 #ifdef DEBUG
 		printf("\r\nDebug mode\r\n");
 #endif		
@@ -79,6 +81,8 @@ int main(void)
 		CurrentWindowMode = WindowMode_User;
 	}
 	
+	Fingerprint_Init();
+	
 	/* 按键模块 IRQ Pin Init */
 	EXTI3_Init();
 	
@@ -92,8 +96,8 @@ int main(void)
 	
 	while(1)
 	{
+//		Fingerprint_NewTask();
 		Window_MainTask();
-		// Delay(1000);
 	}
 	
 	/* No Retval */
@@ -109,8 +113,66 @@ void JTAG_Disable(void)
 }
 
 
-/* Exported functions --------------------------------------------------------*/
 
+void Fingerprint_NewTask(void)
+{
+	u8 IDTemp,Result;
+	
+	if(MG200_DETECT_Status() == SET)
+	{
+//		Finger_EraseAllUser(&Result);
+		
+		Voice_Play(VoiceCmd_Di);
+		IDTemp = 0x00;// 使用自动分配
+		if(Finger_EnrollNewUser(IDTemp) == 0)
+		{
+			printf("Add new user success\r\n");
+		}
+		else
+		{
+			printf("Could new a user\r\n");
+		}
+		
+		while(MG200_DETECT_Status() != RESET)
+		{
+		}
+		
+		while(MG200_DETECT_Status() != SET)
+		{
+		}
+		
+		if(Finger_Compare(&IDTemp) != 0)
+		{
+			printf("No find user\r\n");
+		}
+		else
+		{
+			printf("User ID is %d\r\n",IDTemp);
+		}
+		
+		while(MG200_DETECT_Status() != RESET)
+		{
+		}
+		
+//		if(Finger_CaptureAndExtract(3) == 0)
+//		{
+//			Voice_Play(VoiceCmd_Di);
+//			
+//			
+//		}
+//		else
+//		{
+//		}
+		
+	}
+	else
+	{
+		
+	}
+}
+
+
+/* Exported functions --------------------------------------------------------*/
 
 u8 Admin_Check(void)
 {

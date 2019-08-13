@@ -32,6 +32,7 @@
 #include "oled.h"
 #include "font.h"
 #include "tim.h"
+#include "finger.h"
 	 
 #include "ui.h"
 	 
