@@ -26,6 +26,7 @@
 #include "oled.h"
 #include "key.h"
 #include "font.h"
+#include "tim.h"
 	 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -33,7 +34,8 @@ typedef enum
 {
 	WindowMode_AllClear = 0,
 	WindowMode_Admin	= 1,
-	WindowMode_User		= 2
+	WindowMode_User		= 2,
+	WindowMode_Setting	= 3
 }WindowMode_TypeDef;
 
 #define BUFF_LENGTH 256  // 定义输入缓冲区状态
@@ -41,7 +43,7 @@ typedef enum
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-void Window_MainTask(u8 *WindowMode);
+void Window_MainTask(void);
 
 /* Extern variables ----------------------------------------------------------*/
 extern u16 gTouchStatus;

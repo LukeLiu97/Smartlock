@@ -19,6 +19,9 @@
 	 
 #include "systick.h"
 
+/* Gloabal variables ---------------------------------------------------------*/
+extern u8 ReversalFlag;	 
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
@@ -31,7 +34,7 @@ void OLED_Clear(void);
 
 //u8 OLED_Show_Xx16_Character(u8 Row,u8 Column,u8 Width,const u8 *FontArray);
 u8 OLED_Show_XxN8_Character(u8 Row,u8 Column,u8 RowHeight,u8 Width,const u8 *FontArray);
-
+void OLED_ShowString(u8 RowNumber,u8 RowHeight,u8 Column,const u8 *StringFont,u8 StringLength);
 void OLED_ShowPicture(u8 x,u8 y,u8 px,u8 py,const u8 *Picture);
 #ifdef __cplusplus
 }

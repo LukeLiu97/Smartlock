@@ -26,6 +26,8 @@
 
 #define LED2_OFF() (GPIO_SetBits(GPIOB, GPIO_Pin_8))
 #define LED2_ON() (GPIO_ResetBits(GPIOB, GPIO_Pin_8))
+	 
+#define LED2_OR() (GPIOB->ODR ^= (0x1 <<  8))	 
 
 /* Exported functions ------------------------------------------------------- */
 void LED_Init(void);

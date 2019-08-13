@@ -30,6 +30,8 @@
 
 /* Extern variables ----------------------------------------------------------*/
 extern u16 gTouchStatus;
+extern u8 CurrentWindowMode;
+extern u32 UnBusy_Count;
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -157,12 +159,23 @@ void EXTI3_IRQHandler(void)
 {
 	if(EXTI_GetITStatus(EXTI_Line3) != RESET)
 	{
-		NVIC_DisableIRQ(EXTI3_IRQn);
+		
 		/* Interrupt task */
 		LED3_ON();
 		
+		if(CurrentWindowMode == WindowMode_AllClear)
+		{
+			CurrentWindowMode = WindowMode_User;
+		}
+		else
+		{
+		}
+		UnBusy_Count = 0;
+		
 		gTouchStatus = MPR_TouchStatus();
 
+		printf("gTouchStatus = %d \r\n",gTouchStatus);
+		
 		if(gTouchStatus == 0)
 		{
 #if (defined DEBUG) && (defined SHOW_TOUCHSTATUS)
@@ -182,10 +195,33 @@ void EXTI3_IRQHandler(void)
 		/* Clear the  EXTI line 3 pending bit */
 		EXTI_ClearITPendingBit(EXTI_Line3);
 		
-		NVIC_EnableIRQ(EXTI3_IRQn);
 	}
 	else
 	{
+	}
+}
+
+
+void TIM3_IRQHandler(void)
+{
+	if(TIM_GetFlagStatus(TIM3,TIM_FLAG_Update) == SET)
+	{
+		TIM_ClearFlag(TIM3,TIM_FLAG_Update);
+		
+		/* Intertupt task */
+		LED2_OR();
+		
+		if(UnBusy_Count > 12)
+		{
+			CurrentWindowMode = WindowMode_AllClear;
+			printf("Free status\r\n");
+		}
+		else
+		{
+			UnBusy_Count ++;
+		}
+		
+		
 	}
 }
 

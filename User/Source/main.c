@@ -19,17 +19,17 @@
 u16 gTouchStatus = 0; // 记录每次由MPR121读取到的按键状态
 u8 CurrentWindowMode = WindowMode_AllClear;
 
+u32 UnBusy_Count = 0;
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-extern u8 Password[7]; // 初始密码
-extern u8 StringBuff[BUFF_LENGTH];
 
 /* Private function prototypes -----------------------------------------------*/
 static void JTAG_Disable(void);
 
-extern void OLED_ShowTextBox(u8 CowNumber,u8 CowHeight,u8 *Str);
+//extern void OLED_ShowTextBox(u8 CowNumber,u8 CowHeight,u8 *Str);
 
 
 /* Private functions ---------------------------------------------------------*/
@@ -41,8 +41,8 @@ extern void OLED_ShowTextBox(u8 CowNumber,u8 CowHeight,u8 *Str);
   */
 int main(void)
 {
-	/* 禁止外部中断 */
-	NVIC_DisableIRQ(EXTI3_IRQn);
+	/* 屏蔽全局中断 */
+	__set_PRIMASK(1); 
 	
 	/* IIC 和 OLED 使用JTAG引脚需要重映射 */
 	JTAG_Disable();
@@ -82,12 +82,18 @@ int main(void)
 	/* 按键模块 IRQ Pin Init */
 	EXTI3_Init();
 	
+	/* 定时器3初始化并使能其上溢中断 */
+	TIM3_Interrupt_Init();
+
+	/* 允许全局中断 */
+	__set_PRIMASK(0); 
+	
 	/* 等待系统稳定 */
 	
 	while(1)
 	{
-		Window_MainTask(&CurrentWindowMode);
-		Delay(1000);
+		Window_MainTask();
+		// Delay(1000);
 	}
 	
 	/* No Retval */
@@ -105,60 +111,6 @@ void JTAG_Disable(void)
 
 /* Exported functions --------------------------------------------------------*/
 
-void Password_Input(void)
-{
-	u32 i;
-	u8 KeyValue;
-	
-	for(i = 0; i < (BUFF_LENGTH - 1) ; )
-	{
-		LED3_OFF();
-		
-		KeyValue = Key_Scan();
-			
-		if(KeyValue != 0)/* 电容模块检测到按键变化 */
-		{
-#ifdef DEBUG
-			printf("KeyValue = %c\r\n",KeyValue);
-#endif
-			
-			Voice_Play(VoiceCmd_Di);
-			
-			if(KeyValue == '#')
-			{
-				break;
-			}
-			else if(KeyValue == '*')
-			{
-				if(i == 0)
-				{
-					// Don't do anything
-				}
-				else
-				{
-					i -= 1;
-				}
-				StringBuff[i] = 0; // 现在i向后退一位
-			}
-			else
-			{
-				StringBuff[i] = KeyValue;// 当前输入被记录至缓存区对应位置
-				i++; // i 前进一位，为下次输入准备
-			}
-			
-			
-		}
-		else
-		{
-		}
-		
-		OLED_ShowTextBox(4,2,StringBuff);
-		OLED_ShowTextBox(6,2,StringBuff + 8);
-	}
-	StringBuff[i] = 0;
-	
-	return ;
-}
 
 u8 Admin_Check(void)
 {

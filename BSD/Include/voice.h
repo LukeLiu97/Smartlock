@@ -18,7 +18,10 @@
 #include "stm32f10x.h"
 
 #include "systick.h"
- 
+	 
+/* Global varaiables ---------------------------------------------------------*/
+extern u8 MuteMode;
+	 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 typedef enum

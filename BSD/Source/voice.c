@@ -14,6 +14,9 @@
   * @{
   */
 
+/* Global varaiables ---------------------------------------------------------*/
+u8 MuteMode = 1; // 记录每次由MPR121读取到的按键状态
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -49,36 +52,45 @@ void VoiceModule_Init(void)
 
 void Voice_Play(VoiceCmd_TypeDef VoiceCmd)
 {
-	/* 等待空闲总线 */
-	while((GPIOB->IDR & (0x1 << 1)) != 0)
+	if(MuteMode == 1)
 	{
+		
+	}
+	else
+	{
+		/* 等待空闲总线 */
+		while((GPIOB->IDR & (0x1 << 1)) != 0)
+		{
+		}
+		
+		/* 同步头 */
+		GPIO_SetBits(GPIOB,GPIO_Pin_0);
+		delay_ms(8);
+		GPIO_ResetBits(GPIOB,GPIO_Pin_0);
+		delay_ms(1);
+		
+		/* 发送数据 */
+		for(u32 i = 0;i < 8;i++)
+		{
+			// MSB
+			if((VoiceCmd & (0x1 << (7 - i))) != 0)
+			{
+				GPIO_SetBits(GPIOB,GPIO_Pin_0);
+				delay_us(1500);
+				GPIO_ResetBits(GPIOB,GPIO_Pin_0);
+				delay_us(500);
+			}
+			else
+			{
+				GPIO_SetBits(GPIOB,GPIO_Pin_0);
+				delay_us(500);
+				GPIO_ResetBits(GPIOB,GPIO_Pin_0);
+				delay_us(1500);
+			}
+		}
+	
 	}
 	
-	/* 同步头 */
-	GPIO_SetBits(GPIOB,GPIO_Pin_0);
-	delay_ms(8);
-	GPIO_ResetBits(GPIOB,GPIO_Pin_0);
-	delay_ms(1);
-	
-	/* 发送数据 */
-	for(u32 i = 0;i < 8;i++)
-	{
-		// MSB
-		if((VoiceCmd & (0x1 << (7 - i))) != 0)
-		{
-			GPIO_SetBits(GPIOB,GPIO_Pin_0);
-			delay_us(1500);
-			GPIO_ResetBits(GPIOB,GPIO_Pin_0);
-			delay_us(500);
-		}
-		else
-		{
-			GPIO_SetBits(GPIOB,GPIO_Pin_0);
-			delay_us(500);
-			GPIO_ResetBits(GPIOB,GPIO_Pin_0);
-			delay_us(1500);
-		}
-	}
 	
 	return ;
 }
