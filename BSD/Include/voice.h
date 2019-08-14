@@ -19,8 +19,12 @@
 
 #include "systick.h"
 	 
+#include "global.h"
+	 
+
 /* Global varaiables ---------------------------------------------------------*/
 extern u8 MuteMode;
+extern SmartLockStu SmartLock;
 	 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

@@ -19,6 +19,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "global.h"
+
 #include "gui.h"
 #include "user_string.h"
 
@@ -33,6 +35,8 @@
 #include "motor.h"
 	 
 /* Exported types ------------------------------------------------------------*/
+extern SmartLockStu SmartLock;
+
 /* Exported constants --------------------------------------------------------*/
 typedef enum
 {
@@ -59,6 +63,14 @@ typedef enum
 	SubMenu_FingerMange		= 3,
 	SubMenu_IDCardMange		= 4,
 }SubMenu_TypeDef;
+
+typedef enum
+{
+	UserSubMode_Password 	= 0,
+	UserSubMode_Finger		= 1,
+	UserSubMode_RFID		= 2,
+}UserSubMode_TypeDef;
+
 
 
 

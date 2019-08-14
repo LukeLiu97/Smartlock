@@ -1,43 +1,43 @@
 /**
 ******************************************************************************
-  * @file       oled.h
-  * @brief      
+  * @file       gui_password.h
+  * @brief      密码输入图形交互头文件
   * @version    1.0
-  * @date       Aug-09-2019 Fri
+  * @date       Aug-14-2019 Wed
 ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __OLED_H
-#define __OLED_H
+#ifndef __GUI_PASSWORD_H
+#define __GUI_PASSWORD_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
-
-#include "global.h"
+#include "stdio.h"
 	 
-#include "systick.h"
+#include "gui_baseelmt.h"
+	 
+#include "user_string.h"
 
-/* Gloabal variables ---------------------------------------------------------*/
-extern u8 ReversalFlag;	 
+#include "voice.h"	 
+#include "key.h"
+
+/* Exported functions ------------------------------------------------------- */
+
+extern u8 Key_Scan(void);
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-void OLED_Init(void);	 
-void OLED_Config(void);
-void OLED_Draw_Point(u8 x,u8 y);
-void OLED_Clear(void);	 
+u8 GUI_Password_Enroll(u8 *PasswordBuff,u8 PasswordLength);
+u8 GUI_Password_Check(const u8 *Password,u8 PasswordLength);
 
-//u8 OLED_Show_Xx16_Character(u8 Row,u8 Column,u8 Width,const u8 *FontArray);
-u8 OLED_Show_XxN8_Character(u8 Row,u8 Column,u8 RowHeight,u8 Width,const u8 *FontArray);
-void OLED_ShowString(u8 RowNumber,u8 RowHeight,u8 Column,const u8 *StringFont,u8 StringLength);
-void OLED_ShowPicture(u8 x,u8 y,u8 px,u8 py,const u8 *Picture);
 #ifdef __cplusplus
 }
 #endif

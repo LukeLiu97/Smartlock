@@ -15,7 +15,7 @@
   */
 
 /* Global varaiables ---------------------------------------------------------*/
-u8 MuteMode = 1; // 记录每次由MPR121读取到的按键状态
+//u8 MuteMode = 1; // 记录每次由MPR121读取到的按键状态
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -52,7 +52,7 @@ void VoiceModule_Init(void)
 
 void Voice_Play(VoiceCmd_TypeDef VoiceCmd)
 {
-	if(MuteMode == 1)
+	if(SmartLock.MuteMode == 1)
 	{
 		
 	}

@@ -1,15 +1,15 @@
 /**
 ******************************************************************************
-  * @file       oled.h
-  * @brief      
-  * @version    1.0
-  * @date       Aug-09-2019 Fri
+  * @file       global.h
+  * @brief      全局类型变量定义
+  * @version    1.0 
+  * @date       Aug-14-2019 Wed
 ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __OLED_H
-#define __OLED_H
+#ifndef __GLOBAL_H
+#define __GLOBAL_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -17,27 +17,26 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 
-#include "global.h"
-	 
-#include "systick.h"
-
-/* Gloabal variables ---------------------------------------------------------*/
+/* Extern variables ----------------------------------------------------------*/
 extern u8 ReversalFlag;	 
 
+extern u8 CurrentWindowMode;
+
+extern u8 CurrentUserMode;
+
 /* Exported types ------------------------------------------------------------*/
+typedef struct SmartLockStu_
+{
+	u8 AdminPassword[7];
+	u8 UserPassword[7];
+	u8 MuteMode;
+	u8 LockFlag;
+}SmartLockStu;
+
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-void OLED_Init(void);	 
-void OLED_Config(void);
-void OLED_Draw_Point(u8 x,u8 y);
-void OLED_Clear(void);	 
-
-//u8 OLED_Show_Xx16_Character(u8 Row,u8 Column,u8 Width,const u8 *FontArray);
-u8 OLED_Show_XxN8_Character(u8 Row,u8 Column,u8 RowHeight,u8 Width,const u8 *FontArray);
-void OLED_ShowString(u8 RowNumber,u8 RowHeight,u8 Column,const u8 *StringFont,u8 StringLength);
-void OLED_ShowPicture(u8 x,u8 y,u8 px,u8 py,const u8 *Picture);
 #ifdef __cplusplus
 }
 #endif

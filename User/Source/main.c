@@ -2,9 +2,9 @@
 ******************************************************************************
   * @file       main.c
   * @brief      主程序源文件
-  * @version    0.6
+  * @version    1.0
   * @date       Aug-10-2019 Sat
-  * @update     添加OLED Drive
+  * @update     添加指纹解锁功能
 ******************************************************************************
   */
 
@@ -16,8 +16,8 @@
   */
 
 /* Global varaiables ---------------------------------------------------------*/
+
 u16 gTouchStatus = 0; // 记录每次由MPR121读取到的按键状态
-u8 CurrentWindowMode = WindowMode_AllClear;
 
 u32 UnBusy_Count = 0;
 
@@ -103,6 +103,15 @@ int main(void)
 	
 	while(1)
 	{
+		if(MG200_DETECT_Status() == SET)
+		{
+			CurrentWindowMode = WindowMode_User;
+			CurrentUserMode = UserSubMode_Finger;
+		}
+		else
+		{
+			CurrentUserMode = UserSubMode_Password;
+		}
 		Window_MainTask();
 	}
 	
@@ -142,38 +151,6 @@ void RFID_CardSearch(void)
 		}
 	}
 }
-
-u8 RFID_Card_Compare(void)
-{
-	u8 CardType[2] = {0};
-	u8 SerialNum[4] = {0};
-	u8 SelectCardFlag = 0;
-	
-	/* 寻卡 */
-	if(PcdRequest(PICC_REQALL,CardType) == MI_OK)
-	{
-		printf("CardType = %d%d\r\n",CardType[0],CardType[1]);
-		Voice_Play(VoiceCmd_Di);
-		/* 防冲撞 */
-		if(PcdAnticoll(SerialNum) == MI_OK)
-		{
-			printf("SerialNum = %2x%2x%2x%2x\r\n",SerialNum[0],SerialNum[1],SerialNum[2],SerialNum[3]);
-			/* 选卡 */
-			if(PcdSelect(SerialNum) == MI_OK)
-			{	
-				SelectCardFlag = 1;
-			}
-		}
-	}
-	else
-	{
-	}
-	
-	// if(CardID[] == [Card_ID])
-	
-	return 0;
-}
-
 
 
 void Fingerprint_NewTask(void)

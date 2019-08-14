@@ -404,16 +404,16 @@
               <FileType>1</FileType>
               <FilePath>..\User\Source\user_string.c</FilePath>
             </File>
+            <File>
+              <FileName>global.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Source\global.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>GUI</GroupName>
           <Files>
-            <File>
-              <FileName>gui_base_elmt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI\Source\gui_base_elmt.c</FilePath>
-            </File>
             <File>
               <FileName>gui.h</FileName>
               <FileType>5</FileType>
@@ -423,6 +423,16 @@
               <FileName>gui_finger.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\GUI\Source\gui_finger.c</FilePath>
+            </File>
+            <File>
+              <FileName>gui_password.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUI\Source\gui_password.c</FilePath>
+            </File>
+            <File>
+              <FileName>gui_baseelmt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUI\Source\gui_baseelmt.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,19 +1,32 @@
 /**
 ******************************************************************************
-  * @file       GUI_BaseElmt.c
-  * @brief      图形基础元素
+  * @file       global.c
+  * @brief      全局变量定义
   * @version    1.0
-  * @date       Aug-13-2019 Tue
+  * @date       Aug-14-2019 Wed
 ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "gui_base_elmt.h"
+#include "global.h"
 
 
-/** @addtogroup Base Element
+/** @addtogroup Global variables
   * @{
   */
+
+/* Global varaiables ---------------------------------------------------------*/
+SmartLockStu SmartLock = 
+{
+	"201988",// 管理员密码
+	"201988",// 用户密码
+	0x01,//默认静音
+	0x00 // 锁状态
+};
+
+u8 CurrentWindowMode = 0;
+u8 CurrentUserMode = 0;
+u8 ReversalFlag = 0;
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -22,42 +35,7 @@
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-
-void GUI_ReversalEnable(void)
-{
-	ReversalFlag = 1;
-	return ;
-}
-void GUI_ReversalDisable(void)
-{
-	ReversalFlag = 1;
-	return ;
-}
-
-void GUI_DisplayString(u8 RowNumber,u8 Column,const u8 *StringFont,u8 StringLength)
-{
-	OLED_ShowString(RowNumber,2,Column,StringFont,StringLength);
-	return ;
-}
-
-void GUI_DisplayPassBox(u8 RowNumber,u8 *Str)
-{
-	for(u32 i = 0; i < 6; i++)
-	{
-		if(Str[i] == 0) // 传入的字符序列对应字符值为0
-		{
-			// 显示‘_’
-			OLED_Show_XxN8_Character(RowNumber,(i* 16) + 20,2,8,&Char_8x16[0][0]);
-		}
-		else // 传入的字符序列对应字符值非0
-		{
-			// 显示‘*’
-			OLED_Show_XxN8_Character(RowNumber,(i* 16) + 20,2,8,&Char_8x16[1][0]);
-		}
-	}
-	return ;
-}
-
+    
 /**
   * @}
   */

@@ -39,6 +39,7 @@ void GUI_ReversalDisable(void);
 
 void GUI_DisplayPassBox(u8 RowNumber,u8 *Str);
 void GUI_DisplayString(u8 RowNumber,u8 Column,const u8 *StringFont,u8 StringLength);
+void GUI_DisplayPicture(u8 x,u8 y,u8 px,u8 py,const u8 *Picture);
 
 #ifdef __cplusplus
 }

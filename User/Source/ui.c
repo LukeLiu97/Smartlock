@@ -17,7 +17,6 @@
 
 /* Extern variables ----------------------------------------------------------*/
 extern u8 ReversalFlag;	 // 显示翻转标志
-extern u8 CurrentWindowMode;
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -34,7 +33,6 @@ void Password_Input(void);
 extern u8 Admin_Check(void);
 
 static void Admin_Mode(void);
-static void User_Mode(void);
 
 void ArrayForward(u8 *Array,u8 Length);
 void ArrayBackward(u8 *Array,u8 Length);
@@ -112,10 +110,6 @@ void OLED_ShowWaitRow(u8 RowNumber,u8 RowHeight)
 	return ;
 }
 
-void NumStr_Input(u8 *Buff)
-{
-
-}
 
 void Password_Input(void)
 {
@@ -230,7 +224,7 @@ u8 Menu_Move(u8 *MenuList,u8 MenuListLenth)
 u8 Password_Check(void)
 {	
 	s32 Place;
-	Place = String_ViolentMatch(StringBuff,Password);
+	Place = String_ViolentMatch(StringBuff,SmartLock.UserPassword);
 	
 #ifdef DEBUG
 	printf("Place = %d\r\n",Place);
@@ -302,58 +296,77 @@ void Admin_Mode(void)
 	return ;
 }
 
-void User_Mode(void)
+void User_PasswordMode(void)
 {
+	static u8 FirstFlag = 0;
 	static u8 ErrorCount = 0;
 	// TODO 密码输入界面
 	
-	OLED_Show1stRow(0,2);
-	OLED_Show2ndRow(2,2);
-	
-	// TODO 依据按键输入情况处理缓冲区 + 刷新密码输入区
-	
-	Password_Input(); // 内部调用了OLED_ShowTextBox()用以实时显示输入状况
-	
-	if(CurrentWindowMode == WindowMode_AllClear)
+	if(Key_Scan() != 0 || FirstFlag == 0)
 	{
-	return ;
-	}
-	else
-	{
-	}
-	
-#ifdef DEBUG
-	printf("StringBuff = \"%s\"\r\n",StringBuff);
-#endif		
-	
-	if(Password_Check() == 1)
-	{
-		printf("Password right\r\n");
-		Voice_Play(VoiceCmd_DOOROPEN_SUCCESS);
-		Motor_OpenLock();
-		ErrorCount = 0;
-	}
-	else
-	{
-		printf("Password wrong\r\n");
-		Voice_Play(VoiceCmd_PASSWORD_INCONFORMITY);
-		Motor_CloseLock();
-		ErrorCount++;
-	}
-	
-	if(ErrorCount > 2)
-	{
-		for(u32 i = 0 ;i<10;i++)
+		if(FirstFlag == 0)
 		{
-			OLED_ShowWaitRow(2,2);
-			OLED_Show_XxN8_Character(2,80,2,8,&(Number_8x16[9-i][0]));
-			TIM2_Delay_ms(1000);
+			FirstFlag = 1;
 		}
-		ErrorCount = 1;
+		else
+		{
+		}
+		
+		OLED_Show1stRow(0,2);
+		OLED_Show2ndRow(2,2);
+
+		// TODO 依据按键输入情况处理缓冲区 + 刷新密码输入区
+
+		Password_Input(); // 内部调用了OLED_ShowTextBox()用以实时显示输入状况
+
+		if(CurrentWindowMode == WindowMode_AllClear)
+		{
+		return ;
+		}
+		else
+		{
+		}
+
+		#ifdef DEBUG
+		printf("StringBuff = \"%s\"\r\n",StringBuff);
+		#endif		
+
+		if(Password_Check() == 1)
+		{
+			printf("Password right\r\n");
+			Voice_Play(VoiceCmd_DOOROPEN_SUCCESS);
+			Motor_OpenLock();
+			ErrorCount = 0;
+		}
+		else
+		{
+			printf("Password wrong\r\n");
+			Voice_Play(VoiceCmd_PASSWORD_INCONFORMITY);
+			Motor_CloseLock();
+			ErrorCount++;
+		}
+
+		if(ErrorCount > 2)
+		{
+			for(u32 i = 0 ;i<10;i++)
+			{
+				OLED_ShowWaitRow(2,2);
+				OLED_Show_XxN8_Character(2,80,2,8,&(Number_8x16[9-i][0]));
+				TIM2_Delay_ms(1000);
+			}
+			ErrorCount = 1;
+		}
+		else
+		{
+		}
+		
 	}
 	else
 	{
+		
 	}
+	
+	
 	
 	return ;
 }
@@ -381,6 +394,7 @@ void SubMenu_Change(u32 *NextSubMenu,u8 MenuCurrentPlace)
 
 void Menu_Start(u32 *LastMenu)
 {
+	// 字符串顺序关联用户设置菜单顺序，这里使用的是设置菜单子菜单枚举结构体的顺序
 	const u8 *Str[4] = 
 	{
 		&(MenuString1_16x16[0][0]),// “修改用户密码”
@@ -432,11 +446,11 @@ void Mute_Setting(u8 MenuElmt)
 	// 菜单第一项是静音
 	if(MenuElmt == 0)
 	{
-		MuteMode = 1;
+		SmartLock.MuteMode = 1;
 	}
 	else
 	{
-		MuteMode = 0;
+		SmartLock.MuteMode = 0;
 	}
 }
 
@@ -444,6 +458,23 @@ void Mute_Setting(u8 MenuElmt)
 //{
 //	
 //}
+
+void Menu_PasswordChange(u32 *LastMenu)
+{
+	if(GUI_Password_Check(SmartLock.AdminPassword,6) == 0)
+	{
+		GUI_Password_Enroll(SmartLock.UserPassword,6);
+	}
+	else
+	{
+		
+	}
+	Delay(1000);
+	
+	GUI_ClearScreen();
+	
+	*LastMenu = SubMenu_Start;
+}
 
 
 void Menu_MuteSetting(u32 *LastMenu)
@@ -613,6 +644,8 @@ void Window_AdminMode(void)
 
 void Window_UserMode(void)
 {
+	// 默认用户子模式 CurrentUserMode = UserSubMode_Password;
+	
 	static u8 FirstFlag = 0;
 	
 	if(FirstFlag == 0)
@@ -624,8 +657,19 @@ void Window_UserMode(void)
 	}
 	else
 	{
-		OLED_Clear();
-		User_Mode();
+		switch(CurrentUserMode)
+		{
+			case UserSubMode_Password:
+				OLED_Clear();
+				User_PasswordMode();
+				break;
+			case UserSubMode_Finger:
+				GUI_Finger_Compare();
+				break;
+			default:
+				CurrentUserMode = UserSubMode_Password;
+		}
+		
 		
 		memset(StringBuff,0,sizeof(StringBuff));// 清空输入缓存区
 	}
@@ -641,6 +685,9 @@ void Window_SettingMode(void)
 	{
 		case SubMenu_Start:
 			Menu_Start(&CurrentMenu);
+			break;
+		case SubMenu_PasswordChange:
+			Menu_PasswordChange(&CurrentMenu);
 			break;
 		case SubMenu_MuteSetting:
 			Menu_MuteSetting(&CurrentMenu);

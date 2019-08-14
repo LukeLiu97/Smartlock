@@ -16,8 +16,10 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "gui_base_elmt.h"
+#include "gui_baseelmt.h"
 #include "gui_finger.h"
+#include "gui_password.h"
+
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

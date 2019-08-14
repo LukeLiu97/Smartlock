@@ -45,10 +45,20 @@ extern const u8 UserMangeString2_16x16[8][16];
 extern const u8 FingerMangeString1_16x16[10][16];
 extern const u8 FingerMangeString2_16x16[10][16];
 
-extern const u8 DeleteString1_16x16[8][16];
-extern const u8 DeleteString2_16x16[8][16];
+extern const u8 SuccessString_16x16[4][16];
+extern const u8 FailString_16x16[4][16];
+extern const u8 DeleteString_16x16[4][16];
+extern const u8 EnrollString_16x16[4][16];
 
+extern const u8 EnterString_16x16[4][16];
+extern const u8 PasswordString_16x16[4][16];
+extern const u8 AfreshString_16x16[4][16];
+extern const u8 NewString_16x16[4][16];
+extern const u8 OldString_16x16[4][16];
+extern const u8 AdminString_16x16[6][16];
+extern const u8 IdentifyString_16x16[4][16];
 extern const u8 Logo_72x64[8][72];
+extern const u8 Fingerprint_64px[8][64];
 	 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
