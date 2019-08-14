@@ -419,7 +419,22 @@ void User_Mode(void)
 	return ;
 }
 
-void Menu_Start(void)
+void SubMenu_Change(u32 *NextSubMenu,u8 MenuCurrentPlace)
+{
+	switch(MenuCurrentPlace)
+	{
+		case 0:
+			*NextSubMenu = SubMenu_ChangePassword;
+			break;
+		case 1:
+			*NextSubMenu = SubMenu_MuteSetting;
+			break;
+		default:
+			*NextSubMenu = SubMenu_Start;
+	}
+}
+
+void Menu_Start(u32 *LastMenu)
 {
 	const u8 *Str[4] = 
 	{
@@ -435,6 +450,7 @@ void Menu_Start(void)
 	switch (Menu_Move(CurrentPlace,4))
 	{
 		case MenuPlace_Check:
+			SubMenu_Change(LastMenu,CurrentPlace[1]);
 			OLED_Clear();
 			break;
 		case MenuPlace_Back:
@@ -455,28 +471,50 @@ void Menu_Start(void)
 	ReversalFlag = 0;
 	OLED_ShowString(6,2,0,Str[CurrentPlace[2]],StrLenArray[CurrentPlace[2]]);
 	
+	if(*LastMenu != SubMenu_Start)
+	{
+		OLED_Clear();
+	}
+	else
+	{
+	}
+	
 	return ;
 }
 
-void Menu_Mute(void)
+void Mute_Setting(u8 MenuElmt)
+{
+	// 菜单第一项是静音
+	if(MenuElmt == 0)
+	{
+		MuteMode = 1;
+	}
+	else
+	{
+		MuteMode = 0;
+	}
+}
+
+void Menu_MuteSetting(u32 *LastMenu)
 {
 	const u8 *Str[2] = 
 	{
-		&(MenuString1_16x16[0][0]),
-		&(MenuString2_16x16[0][0])
+		&(MuteString1_16x16[0][0]),
+		&(MuteString2_16x16[0][0])
 	};
 	const u8 StrLenArray[2] = {2,2};
 	
 	static u8 CurrentPlace[2] = {0,1};
 	
-	switch (Menu_Move(CurrentPlace,4))
+	switch (Menu_Move(CurrentPlace,2))
 	{
 		case MenuPlace_Check:
+			Mute_Setting(CurrentPlace[0]);
 			OLED_Clear();
 			break;
 		case MenuPlace_Back:
+			*LastMenu = SubMenu_Start;
 			OLED_Clear();
-			CurrentWindowMode = WindowMode_User;
 			break;
 		case MenuPlace_Shift:
 			OLED_Clear();
@@ -485,11 +523,22 @@ void Menu_Mute(void)
 			break;
 	}
 	
-	OLED_ShowMenuRow(0,2);
+	
+	
+	OLED_ShowString(0,2,32,&MenuString2_16x16[0][0],4); // 居中显示“声音模式”
+	
 	ReversalFlag = 1;
-	OLED_ShowString(2,2,0,Str[CurrentPlace[0]],StrLenArray[CurrentPlace[0]]);
+	OLED_ShowString(CurrentPlace[0] * 2 + 2,2,0,Str[CurrentPlace[0]],StrLenArray[CurrentPlace[0]]);
 	ReversalFlag = 0;
-	OLED_ShowString(4,2,0,Str[CurrentPlace[1]],StrLenArray[CurrentPlace[1]]);
+	OLED_ShowString(CurrentPlace[1] * 2 + 2,2,0,Str[CurrentPlace[1]],StrLenArray[CurrentPlace[1]]);
+	
+	if(*LastMenu != SubMenu_MuteSetting)
+	{
+		OLED_Clear();
+	}
+	else
+	{
+	}
 	
 	return ;
 }
@@ -529,7 +578,20 @@ void Window_UserMode(void)
 
 void Window_SettingMode(void)
 {
-	Menu_Start();
+	static u32 CurrentMenu = SubMenu_Start; 
+	
+	switch(CurrentMenu)
+	{
+		case SubMenu_Start:
+			Menu_Start(&CurrentMenu);
+			break;
+		case SubMenu_MuteSetting:
+			Menu_MuteSetting(&CurrentMenu);
+			break;
+		default:
+			CurrentMenu = SubMenu_Start;
+	}
+	
 	
 	return ;
 }

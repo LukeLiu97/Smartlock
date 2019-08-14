@@ -120,7 +120,7 @@ void Fingerprint_NewTask(void)
 	
 	if(MG200_DETECT_Status() == SET)
 	{
-//		Finger_EraseAllUser(&Result);
+		Finger_EraseAllUser(&Result);
 		
 		Voice_Play(VoiceCmd_Di);
 		IDTemp = 0x00;// 使用自动分配
