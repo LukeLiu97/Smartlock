@@ -39,6 +39,15 @@ extern const u8 Number_8x16[10][16];
 extern const u8 MuteString1_16x16[4][16];
 extern const u8 MuteString2_16x16[4][16];
 
+extern const u8 UserMangeString1_16x16[8][16];
+extern const u8 UserMangeString2_16x16[8][16];
+
+extern const u8 FingerMangeString1_16x16[10][16];
+extern const u8 FingerMangeString2_16x16[10][16];
+
+extern const u8 DeleteString1_16x16[8][16];
+extern const u8 DeleteString2_16x16[8][16];
+
 extern const u8 Logo_72x64[8][72];
 	 
 /* Exported macro ------------------------------------------------------------*/

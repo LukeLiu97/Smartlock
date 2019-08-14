@@ -34,6 +34,8 @@ u8 FingerPackOver = 0;
 static void JTAG_Disable(void);
 
 void Fingerprint_NewTask(void);
+
+void RFID_CardSearch(void);
 	
 /* Private functions ---------------------------------------------------------*/
 
@@ -83,6 +85,11 @@ int main(void)
 	
 	Fingerprint_Init();
 	
+	Motor_Init();
+	
+	// SPI2 需要开启
+	RFID_Init();
+	
 	/* 按键模块 IRQ Pin Init */
 	EXTI3_Init();
 	
@@ -92,11 +99,10 @@ int main(void)
 	/* 允许全局中断 */
 	__set_PRIMASK(0); 
 	
-	/* 等待系统稳定 */
+	/* 等待系统稳定 */	
 	
 	while(1)
 	{
-//		Fingerprint_NewTask();
 		Window_MainTask();
 	}
 	
@@ -110,6 +116,62 @@ void JTAG_Disable(void)
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);// 复位后才可再次重映射
 	
 	return ;
+}
+
+
+// RFID init
+
+void RFID_CardSearch(void)
+{
+	u8 CardType[2] = {0};
+	u8 SerialNum[4] = {0};
+	
+	/* 寻卡 */
+	if(PcdRequest(PICC_REQALL,CardType) == MI_OK)
+	{
+		printf("CardType = %d%d\r\n",CardType[0],CardType[1]);
+		Voice_Play(VoiceCmd_Di);
+		/* 防冲撞 */
+		if(PcdAnticoll(SerialNum) == MI_OK)
+		{
+			printf("SerialNum = %2x%2x%2x%2x\r\n",SerialNum[0],SerialNum[1],SerialNum[2],SerialNum[3]);
+			/* 选卡 */
+			if(PcdSelect(SerialNum) == MI_OK)
+			{	
+			}
+		}
+	}
+}
+
+u8 RFID_Card_Compare(void)
+{
+	u8 CardType[2] = {0};
+	u8 SerialNum[4] = {0};
+	u8 SelectCardFlag = 0;
+	
+	/* 寻卡 */
+	if(PcdRequest(PICC_REQALL,CardType) == MI_OK)
+	{
+		printf("CardType = %d%d\r\n",CardType[0],CardType[1]);
+		Voice_Play(VoiceCmd_Di);
+		/* 防冲撞 */
+		if(PcdAnticoll(SerialNum) == MI_OK)
+		{
+			printf("SerialNum = %2x%2x%2x%2x\r\n",SerialNum[0],SerialNum[1],SerialNum[2],SerialNum[3]);
+			/* 选卡 */
+			if(PcdSelect(SerialNum) == MI_OK)
+			{	
+				SelectCardFlag = 1;
+			}
+		}
+	}
+	else
+	{
+	}
+	
+	// if(CardID[] == [Card_ID])
+	
+	return 0;
 }
 
 

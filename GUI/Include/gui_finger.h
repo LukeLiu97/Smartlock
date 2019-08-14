@@ -1,54 +1,35 @@
 /**
 ******************************************************************************
-  * @file       main.h
-  * @brief      主程序头文件
-  * @note       起到global.h 的作用
-  * @version    1.1
-  * @date       Tue 06-08-2019
+  * @file       gui_finger.h
+  * @brief      指纹图形交互界面
+  * @version    1.0
+  * @date       Aug-14-2019 Wed
 ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef __GUI_FINGER_H
+#define __GUI_FINGER_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "systick.h"
-	 
-#include "led.h"
+#include "stm32f10x.h" // 引入数据类型定义	 
+
+#include "gui_base_elmt.h"
 #include "time.h"
-#include "uart.h"
-#include "voice.h"
-#include "iic.h"
-#include "mpr121.h"
-#include "key.h"
-#include "oled.h"
-#include "font.h"
-#include "tim.h"
-#include "finger.h"
-#include "motor.h"
-#include "rfid.h"
-
-#include "gui.h"	 
-#include "ui.h"
-
 	 
+#include "finger.h"
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-
 /* Exported macro ------------------------------------------------------------*/
-
 /* Exported functions ------------------------------------------------------- */
 
-u8 Admin_Check(void);
-
+void GUI_Finger_EnrollNewUser(void);
+void GUI_Finger_EraseAllUser(void);
+	 
 #ifdef __cplusplus
 }
 #endif

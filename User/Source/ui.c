@@ -41,7 +41,6 @@ void ArrayBackward(u8 *Array,u8 Length);
 
 static void Password_Input(void);
 static u8 Password_Check(void);
-static s32 String_ViolentMatch(const u8 *TargetString,const u8 *MatchingString);
 
 static void OLED_Show1stRow(u8 RowNumber,u8 RowHeight);// 显示文字 按#确认 按*取消
 static void OLED_Show2ndRow(u8 RowNumber,u8 RowHeight);// 显示文字 请输入密码
@@ -113,6 +112,10 @@ void OLED_ShowWaitRow(u8 RowNumber,u8 RowHeight)
 	return ;
 }
 
+void NumStr_Input(u8 *Buff)
+{
+
+}
 
 void Password_Input(void)
 {
@@ -163,8 +166,6 @@ void Password_Input(void)
 				StringBuff[i] = KeyValue;// 当前输入被记录至缓存区对应位置
 				i++; // i 前进一位，为下次输入准备
 			}
-			
-			
 		}
 		else
 		{
@@ -246,71 +247,7 @@ u8 Password_Check(void)
 	
 }
 
-s8 String_Compare(const u8 *String1,const u8 *String2)
-{
-	while(*String1 != '\0'){
-        if(*String1 < *String2){
-            return -1;
-        }
-        else if(*String1 > *String2){
-            return 1;
-        }
-        else{}
-        String1++;
-        String2++;
-    }
-    if(*String2 != '\0'){
-        return -1;
-    }
-    else{
-        return 0;
-    }
-}
 
-s32 String_ViolentMatch(const u8 *TargetString,const u8 *MatchingString)
-{
-	u32 T_Length = strlen((const char *)TargetString);
-	u32 M_Length = strlen((const char *)MatchingString);
-	
-	u32 i,j;
-	
-	if((T_Length < M_Length) ||  (T_Length > 0xFFFFFFF) || (M_Length > 0xFFFFFFF))
-	{
-		return -1;// 目标字符串长度过短。
-	}
-	else
-	{
-		for(i = 0;i < (T_Length - M_Length + 1);i++)
-		{
-			for(j = 0;j < M_Length; j++)
-			{
-				if(TargetString[i + j] != MatchingString[j])//对应位置不匹配，从下一位置重新开始匹配
-				{
-					break;
-				}
-				else// 继续匹配
-				{
-				}
-			}
-			if(j == M_Length)// 完全匹配
-			{
-				break;
-			}
-			else// 失配
-			{
-			}
-		}
-		
-		if(i > (T_Length - M_Length))// 最后位置依然不匹配
-		{
-			return -1;
-		}
-		else// 匹配成功，返回对应目标字符串匹配位置
-		{
-			return i;
-		}
-	}
-}
 
 void ArrayBackward(u8 *Array,u8 Length)
 {
@@ -393,12 +330,14 @@ void User_Mode(void)
 	{
 		printf("Password right\r\n");
 		Voice_Play(VoiceCmd_DOOROPEN_SUCCESS);
+		Motor_OpenLock();
 		ErrorCount = 0;
 	}
 	else
 	{
 		printf("Password wrong\r\n");
 		Voice_Play(VoiceCmd_PASSWORD_INCONFORMITY);
+		Motor_CloseLock();
 		ErrorCount++;
 	}
 	
@@ -423,11 +362,17 @@ void SubMenu_Change(u32 *NextSubMenu,u8 MenuCurrentPlace)
 {
 	switch(MenuCurrentPlace)
 	{
-		case 0:
-			*NextSubMenu = SubMenu_ChangePassword;
+		case SubMenu_PasswordChange-1:
+			*NextSubMenu = SubMenu_PasswordChange;
 			break;
-		case 1:
+		case SubMenu_MuteSetting-1:
 			*NextSubMenu = SubMenu_MuteSetting;
+			break;
+		case SubMenu_FingerMange-1:
+			*NextSubMenu = SubMenu_FingerMange;
+			break;
+		case SubMenu_IDCardMange-1:
+			*NextSubMenu = SubMenu_IDCardMange;
 			break;
 		default:
 			*NextSubMenu = SubMenu_Start;
@@ -438,10 +383,10 @@ void Menu_Start(u32 *LastMenu)
 {
 	const u8 *Str[4] = 
 	{
-		&(MenuString1_16x16[0][0]),
-		&(MenuString2_16x16[0][0]),
-		&(MenuString3_16x16[0][0]),
-		&(MenuString4_16x16[0][0]),
+		&(MenuString1_16x16[0][0]),// “修改用户密码”
+		&(MenuString2_16x16[0][0]),// “声音模式”
+		&(MenuString3_16x16[0][0]),// “登记指纹”
+		&(MenuString4_16x16[0][0]),// “登记卡片”
 	};
 	const u8 StrLenArray[4] = {6,4,4,4};
 	
@@ -495,6 +440,12 @@ void Mute_Setting(u8 MenuElmt)
 	}
 }
 
+//void Password_Change(u8 MenuElmt)
+//{
+//	
+//}
+
+
 void Menu_MuteSetting(u32 *LastMenu)
 {
 	const u8 *Str[2] = 
@@ -523,8 +474,6 @@ void Menu_MuteSetting(u32 *LastMenu)
 			break;
 	}
 	
-	
-	
 	OLED_ShowString(0,2,32,&MenuString2_16x16[0][0],4); // 居中显示“声音模式”
 	
 	ReversalFlag = 1;
@@ -535,6 +484,114 @@ void Menu_MuteSetting(u32 *LastMenu)
 	if(*LastMenu != SubMenu_MuteSetting)
 	{
 		OLED_Clear();
+	}
+	else
+	{
+	}
+	
+	return ;
+}
+
+void Finger_Mange(u8 MenuElmt)
+{
+	// 菜单第一项是新增用户
+	if(MenuElmt == 0)
+	{
+		// 新增用户任务
+		GUI_Finger_EnrollNewUser();
+	}
+	else
+	{
+		// 删除用户任务
+		GUI_Finger_EraseAllUser();
+	}
+}
+
+
+void Menu_FingerMange(u32 *LastMenu)
+{
+	const u8 *Str[2] = 
+	{
+		&(UserMangeString1_16x16[0][0]),// 新增用户
+		&(UserMangeString2_16x16[0][0]) // 删除用户
+	};
+	const u8 StrLenArray[2] = {4,4};// 记录字符串长度
+	
+	static u8 CurrentPlace[2] = {0,1};
+
+	switch (Menu_Move(CurrentPlace,2))
+	{
+		case MenuPlace_Check:
+			Finger_Mange(CurrentPlace[0]);
+			GUI_ClearScreen();
+			break;
+		case MenuPlace_Back:
+			*LastMenu = SubMenu_Start;
+			GUI_ClearScreen();
+			break;
+		case MenuPlace_Shift:
+			GUI_ClearScreen();
+			break;
+		default:
+			break;
+	}
+	
+	GUI_DisplayString(0,32,&MenuString3_16x16[0][0],4);// 居中显示“登记指纹”
+	
+	ReversalFlag = 1;
+	OLED_ShowString(CurrentPlace[0] * 2 + 2,2,0,Str[CurrentPlace[0]],StrLenArray[CurrentPlace[0]]);
+	ReversalFlag = 0;
+	OLED_ShowString(CurrentPlace[1] * 2 + 2,2,0,Str[CurrentPlace[1]],StrLenArray[CurrentPlace[1]]);
+	
+	if(*LastMenu != SubMenu_FingerMange)
+	{
+		GUI_ClearScreen();
+	}
+	else
+	{
+	}
+	
+	return ;
+}
+
+void Menu_IDCardMange(u32 *LastMenu)
+{
+	const u8 *Str[2] = 
+	{
+		&(UserMangeString1_16x16[0][0]),// 新增用户
+		&(UserMangeString2_16x16[0][0]) // 删除用户
+	};
+	const u8 StrLenArray[2] = {4,4};// 记录字符串长度
+	
+	static u8 CurrentPlace[2] = {0,1};
+
+	switch (Menu_Move(CurrentPlace,2))
+	{
+		case MenuPlace_Check:
+//			Mute_Setting(CurrentPlace[0]);
+			GUI_ClearScreen();
+			break;
+		case MenuPlace_Back:
+			*LastMenu = SubMenu_Start;
+			GUI_ClearScreen();
+			break;
+		case MenuPlace_Shift:
+			GUI_ClearScreen();
+			break;
+		default:
+			break;
+	}
+	
+	GUI_DisplayString(0,32,&MenuString4_16x16[0][0],4);// 居中显示“登记卡片”
+	
+	ReversalFlag = 1;
+	OLED_ShowString(CurrentPlace[0] * 2 + 2,2,0,Str[CurrentPlace[0]],StrLenArray[CurrentPlace[0]]);
+	ReversalFlag = 0;
+	OLED_ShowString(CurrentPlace[1] * 2 + 2,2,0,Str[CurrentPlace[1]],StrLenArray[CurrentPlace[1]]);
+	
+	if(*LastMenu != SubMenu_IDCardMange)
+	{
+		GUI_ClearScreen();
 	}
 	else
 	{
@@ -587,6 +644,12 @@ void Window_SettingMode(void)
 			break;
 		case SubMenu_MuteSetting:
 			Menu_MuteSetting(&CurrentMenu);
+			break;
+		case SubMenu_FingerMange:
+			Menu_FingerMange(&CurrentMenu);
+			break;
+		case SubMenu_IDCardMange:
+			Menu_IDCardMange(&CurrentMenu);
 			break;
 		default:
 			CurrentMenu = SubMenu_Start;

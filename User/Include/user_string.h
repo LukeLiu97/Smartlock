@@ -1,53 +1,29 @@
 /**
 ******************************************************************************
-  * @file       main.h
-  * @brief      主程序头文件
-  * @note       起到global.h 的作用
-  * @version    1.1
-  * @date       Tue 06-08-2019
+  * @file       User_String.h
+  * @brief      用户自定的字符串函数
+  * @version    1.0
+  * @date       Aug-14-2019 Wed
 ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef __USER_STRING_H
+#define __USER_STRING_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include "systick.h"
-	 
-#include "led.h"
-#include "time.h"
-#include "uart.h"
-#include "voice.h"
-#include "iic.h"
-#include "mpr121.h"
-#include "key.h"
-#include "oled.h"
-#include "font.h"
-#include "tim.h"
-#include "finger.h"
-#include "motor.h"
-#include "rfid.h"
-
-#include "gui.h"	 
-#include "ui.h"
-
-	 
+#include "stm32f10x.h"
+	
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-
 /* Exported macro ------------------------------------------------------------*/
-
 /* Exported functions ------------------------------------------------------- */
-
-u8 Admin_Check(void);
+s8 String_Compare(const u8 *String1,const u8 *String2);
+s32 String_ViolentMatch(const u8 *TargetString,const u8 *MatchingString);
 
 #ifdef __cplusplus
 }

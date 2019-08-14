@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_MD,USE_STDPERIPH_DRIVER,DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CMSIS;..\Std_Library\inc;..\BSD\Include;..\User\Include</IncludePath>
+              <IncludePath>..\CMSIS;..\Std_Library\inc;..\BSD\Include;..\User\Include;..\GUI\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -399,25 +399,100 @@
               <FileType>1</FileType>
               <FilePath>..\User\Source\ui.c</FilePath>
             </File>
+            <File>
+              <FileName>user_string.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Source\user_string.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>CMSIS</GroupName>
+          <GroupName>GUI</GroupName>
           <Files>
             <File>
-              <FileName>system_stm32f10x.c</FileName>
+              <FileName>gui_base_elmt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\CMSIS\system_stm32f10x.c</FilePath>
+              <FilePath>..\GUI\Source\gui_base_elmt.c</FilePath>
             </File>
             <File>
-              <FileName>core_cm3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\CMSIS\core_cm3.c</FilePath>
+              <FileName>gui.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\GUI\Include\gui.h</FilePath>
             </File>
             <File>
-              <FileName>startup_stm32f10x_md.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\CMSIS\startup_stm32f10x_md.s</FilePath>
+              <FileName>gui_finger.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUI\Source\gui_finger.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>BoardSupportDrive</GroupName>
+          <Files>
+            <File>
+              <FileName>iic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\iic.c</FilePath>
+            </File>
+            <File>
+              <FileName>key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\key.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>mpr121.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\mpr121.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\systick.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\time.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>voice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\voice.c</FilePath>
+            </File>
+            <File>
+              <FileName>tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>finger.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\finger.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\rfid.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -542,62 +617,22 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>BoardSupportDrive</GroupName>
+          <GroupName>CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>iic.c</FileName>
+              <FileName>system_stm32f10x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\BSD\Source\iic.c</FilePath>
+              <FilePath>..\CMSIS\system_stm32f10x.c</FilePath>
             </File>
             <File>
-              <FileName>key.c</FileName>
+              <FileName>core_cm3.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\BSD\Source\key.c</FilePath>
+              <FilePath>..\CMSIS\core_cm3.c</FilePath>
             </File>
             <File>
-              <FileName>led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BSD\Source\led.c</FilePath>
-            </File>
-            <File>
-              <FileName>mpr121.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BSD\Source\mpr121.c</FilePath>
-            </File>
-            <File>
-              <FileName>oled.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BSD\Source\oled.c</FilePath>
-            </File>
-            <File>
-              <FileName>systick.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BSD\Source\systick.c</FilePath>
-            </File>
-            <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BSD\Source\time.c</FilePath>
-            </File>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BSD\Source\uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>voice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BSD\Source\voice.c</FilePath>
-            </File>
-            <File>
-              <FileName>tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BSD\Source\tim.c</FilePath>
-            </File>
-            <File>
-              <FileName>finger.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BSD\Source\finger.c</FilePath>
+              <FileName>startup_stm32f10x_md.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\CMSIS\startup_stm32f10x_md.s</FilePath>
             </File>
           </Files>
         </Group>

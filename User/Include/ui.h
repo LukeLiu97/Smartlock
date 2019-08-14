@@ -18,7 +18,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-	 
+
+#include "gui.h"
+#include "user_string.h"
+
 #include "systick.h"
 #include "time.h"
 #include "led.h"
@@ -27,6 +30,7 @@
 #include "key.h"
 #include "font.h"
 #include "tim.h"
+#include "motor.h"
 	 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -50,8 +54,10 @@ typedef enum
 typedef enum
 {
 	SubMenu_Start 			= 0,
-	SubMenu_ChangePassword	= 1,
-	SubMenu_MuteSetting		= 2
+	SubMenu_PasswordChange	= 1,
+	SubMenu_MuteSetting		= 2,
+	SubMenu_FingerMange		= 3,
+	SubMenu_IDCardMange		= 4,
 }SubMenu_TypeDef;
 
 
