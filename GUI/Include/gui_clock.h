@@ -1,30 +1,25 @@
 /**
 ******************************************************************************
-  * @file       time.h
-  * @brief      简单计时函数头文件
+  * @file       gui_clock.h
+  * @brief      时钟图形化交互头文件
   * @version    1.0
-  * @date       Tue 06-08-2019
+  * @date       Aug-16-2019 Fri
 ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __TIME_H
-#define __TIME_H
+#ifndef __GUI_CLOCK_H
+#define __GUI_CLOCK_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x.h"
-
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void Delay(u32 t);
-void delay_ms(u32 xms);
-void delay_us(u32 xus);
 
 #ifdef __cplusplus
 }

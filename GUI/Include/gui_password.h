@@ -21,7 +21,7 @@
 	 
 #include "gui_baseelmt.h"
 	 
-#include "user_string.h"
+#include "user_misc.h"
 
 #include "voice.h"	 
 #include "key.h"

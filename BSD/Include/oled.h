@@ -19,7 +19,7 @@
 
 #include "global.h"
 	 
-#include "systick.h"
+#include "time.h"
 
 /* Gloabal variables ---------------------------------------------------------*/
 extern u8 ReversalFlag;	 
@@ -32,7 +32,8 @@ extern u8 ReversalFlag;
 void OLED_Init(void);	 
 void OLED_Config(void);
 void OLED_Draw_Point(u8 x,u8 y);
-void OLED_Clear(void);	 
+void OLED_Clear(void);	
+void OLED_ClearPart(u8 StartRowNum,u8 Height,u8 StartColumn,u8 Width);	 
 
 //u8 OLED_Show_Xx16_Character(u8 Row,u8 Column,u8 Width,const u8 *FontArray);
 u8 OLED_Show_XxN8_Character(u8 Row,u8 Column,u8 RowHeight,u8 Width,const u8 *FontArray);

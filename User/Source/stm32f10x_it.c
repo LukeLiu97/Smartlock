@@ -267,6 +267,38 @@ void USART2_IRQHandler(void)
 	}
 }
 
+/**
+  * @brief  This function handles RTC global interrupt request.
+  * @param  None
+  * @retval None
+  */
+void RTC_IRQHandler(void)
+{
+//	static u32 Count = 0;
+	
+	if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
+	{
+	/* Clear the RTC Second interrupt */
+	RTC_ClearITPendingBit(RTC_IT_SEC);
+
+	/* Interrupt Task */
+		
+//	if(Count >= 5)
+//	{
+//		TimeDisplay = 1;
+//		Count = 0;
+//	}
+//	else
+//	{
+//		Count++;
+//	}
+
+	/* Wait until last write operation on RTC registers has finished */
+	RTC_WaitForLastTask();
+
+	}
+}
+
 
 /**
   * @brief  This function handles PPP interrupt request.

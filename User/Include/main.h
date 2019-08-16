@@ -21,7 +21,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "global.h"
-#include "systick.h"
 	 
 #include "led.h"
 #include "time.h"
@@ -36,6 +35,8 @@
 #include "finger.h"
 #include "motor.h"
 #include "rfid.h"
+#include "at24c04.h"
+#include "rtc.h"
 
 #include "gui.h"	 
 #include "ui.h"
@@ -51,6 +52,9 @@
 /* Exported functions ------------------------------------------------------- */
 
 u8 Admin_Check(void);
+
+
+void RTC_DispClock(void);
 
 #ifdef __cplusplus
 }

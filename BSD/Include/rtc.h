@@ -1,15 +1,15 @@
 /**
 ******************************************************************************
-  * @file       time.h
-  * @brief      简单计时函数头文件
+  * @file       rtc.h
+  * @brief      Real time clock drive
   * @version    1.0
-  * @date       Tue 06-08-2019
+  * @date       Aug-15-2019 Thu
 ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __TIME_H
-#define __TIME_H
+#ifndef __RTC_H
+#define __RTC_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -17,14 +17,17 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
+#include "global.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void Delay(u32 t);
-void delay_ms(u32 xms);
-void delay_us(u32 xus);
+void RTC_Init(void);
+void RTC_TimeCalulate(TimeStu *Time);
+
+u8 Set_RTCTime(TimeStu *Time);
+void Read_RTCTime(TimeStu *Time);
 
 #ifdef __cplusplus
 }

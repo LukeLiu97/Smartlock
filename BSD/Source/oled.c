@@ -83,7 +83,7 @@ void OLED_Init(void)
 	SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
 	SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
 	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;
 	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
 	SPI_InitStructure.SPI_CRCPolynomial = 7;
 	SPI_Init(SPI2, &SPI_InitStructure);
@@ -233,6 +233,32 @@ void OLED_Clear(void)
 	return ;
 }
 
+void OLED_ClearPart(u8 StartRowNum,u8 Height,u8 StartColumn,u8 Width)
+{
+	u8 Blank;
+	
+	if(ReversalFlag == 0)
+	{
+		Blank = 0x00;
+	}
+	else
+	{
+		Blank = 0xFF;
+	}
+	
+	for(u8 i = StartRowNum;i < StartRowNum + Height;i++)
+	{
+		OLED_SetLocation(StartColumn ,i);
+		
+		for(u8 j = StartColumn;j < StartColumn + Width ; j++)
+		{
+			OLED_SendData(Blank);
+		}
+	}
+	
+	return ;
+}
+
 // 每行占8的像素，视为屏幕行 Row 0~7 
 u8 OLED_Show_XxN8_Character(u8 Row,u8 Column,u8 RowHeight,u8 Width,const u8 *FontArray)
 {
@@ -280,11 +306,13 @@ void OLED_ShowPicture(u8 x,u8 y,u8 px,u8 py,const u8 *Picture)
 		{
 			if(ReversalFlag == 0)
 			{
-				OLED_SendData(((u8 (*)[px])Picture)[CurrentRow][i]);
+//				OLED_SendData(((u8 (*)[px])Picture)[CurrentRow][i]);// 强转常量类型操作不合适
+				OLED_SendData(*(Picture+CurrentRow * px + i));
 			}
 			else
 			{
-				OLED_SendData(~((u8 (*)[px])Picture)[CurrentRow][i]);
+//				OLED_SendData(~((u8 (*)[px])Picture)[CurrentRow][i]);// 强转常量类型操作不合适
+				OLED_SendData(*(Picture+CurrentRow * px + i));
 			}
 		}
 		CurrentRow++;

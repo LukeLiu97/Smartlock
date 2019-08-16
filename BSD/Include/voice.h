@@ -16,10 +16,10 @@
 #endif
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
-
-#include "systick.h"
 	 
 #include "global.h"
+
+#include "time.h"
 	 
 
 /* Global varaiables ---------------------------------------------------------*/

@@ -1,31 +1,40 @@
 /**
 ******************************************************************************
-  * @file       time.h
-  * @brief      简单计时函数头文件
+  * @file       gui_rfid.h
+  * @brief      RFID图形交互头文件
   * @version    1.0
-  * @date       Tue 06-08-2019
+  * @date       Aug-15-2019 Thu
 ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __TIME_H
-#define __TIME_H
+#ifndef __GUI_RFID_H
+#define __GUI_RFID_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
-
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
+#include "stdio.h"
+	 
+#include "user_misc.h"
 
+#include "gui_baseelmt.h"
+#include "rfid.h"
+#include "voice.h"
+#include "time.h"
+#include "motor.h"
+	 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+extern u8 PasswordA[6];// 默认密码暂不修改
+	 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void Delay(u32 t);
-void delay_ms(u32 xms);
-void delay_us(u32 xus);
-
+void GUI_RFID_AuthorizeNewCard(void);
+void GUI_RFID_CompareCard(void);
+	 
 #ifdef __cplusplus
 }
 #endif

@@ -16,7 +16,7 @@ Notice    :±¾³ÌĞòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßĞí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾¡£°æÈ¨ËùÓĞ£¬µÁ°
 */
 #include "rfid.h"
 #include "oled.h"
-#include "systick.h"
+#include "time.h"
 #include "string.h"
 /**********************************************************************************************
 * CONSTANTS
@@ -90,6 +90,10 @@ u8 spi_read_write(u8 SendData)
 **************************************/
 void RFID_Init(void)
 {
+	/* SPI2 Config*/
+	
+	// ÓÉÓÚRC522ÔÚ½Ï¸ßËÙÂÊÍ¨ĞÅ²»ÎÈ¶¨£¬ËùÒÔSPIÊ±ÖÓÓ¦ÉÔÂıÒ»Ğ©
+	
 	/*
 		GPIO ÅäÖÃ
 		RFID_CS PA6  RFID_RST PA7

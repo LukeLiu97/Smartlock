@@ -22,9 +22,8 @@
 #include "global.h"
 
 #include "gui.h"
-#include "user_string.h"
+#include "user_misc.h"
 
-#include "systick.h"
 #include "time.h"
 #include "led.h"
 #include "voice.h"
@@ -71,15 +70,12 @@ typedef enum
 	UserSubMode_RFID		= 2,
 }UserSubMode_TypeDef;
 
-
-
-
-#define BUFF_LENGTH 256  // 定义输入缓冲区状态
+#define BUFF_LENGTH 256  // 定义输入缓冲区长度
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-void Window_MainTask(void);
+void Task_WindowMain(void);
 
 /* Extern variables ----------------------------------------------------------*/
 extern u16 gTouchStatus;

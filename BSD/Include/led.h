@@ -22,7 +22,8 @@
 /* Exported macro ------------------------------------------------------------*/
 #define LED3_OFF() (GPIO_SetBits(GPIOB, GPIO_Pin_6))
 #define LED3_ON() (GPIO_ResetBits(GPIOB, GPIO_Pin_6))
-	 
+
+#define LED3_OR() (GPIOB->ODR ^= (0x1 <<  6))
 
 #define LED2_OFF() (GPIO_SetBits(GPIOB, GPIO_Pin_8))
 #define LED2_ON() (GPIO_ResetBits(GPIOB, GPIO_Pin_8))

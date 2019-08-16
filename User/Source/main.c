@@ -19,8 +19,6 @@
 
 u16 gTouchStatus = 0; // 记录每次由MPR121读取到的按键状态
 
-u32 UnBusy_Count = 0;
-
 u8 FingerPack[8] 	= {0};
 u8 FingerPackCount = 0;
 u8 FingerPackOver = 0;
@@ -32,11 +30,15 @@ u8 FingerPackOver = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 static void JTAG_Disable(void);
+static void NVIC_Config(void);
+static void RCC_Config(void);
 
-void Fingerprint_NewTask(void);
+static void Task_AdminCkeck(void);
+static void Task_FingerIdentify(void);
+static void Task_RFIDIdentify(void);
+// static void Task_DoorMange(void);
 
-void RFID_CardSearch(void);
-	
+void OLED_DrawX(void);
 /* Private functions ---------------------------------------------------------*/
 
 /**
@@ -47,7 +49,13 @@ void RFID_CardSearch(void);
 int main(void)
 {
 	/* 屏蔽全局中断 */
-	__set_PRIMASK(1); 
+	__set_PRIMASK(1);
+	
+	NVIC_Config();
+	
+	RCC_Config();
+	
+	RTC_Init();
 	
 	/* IIC 和 OLED 使用JTAG引脚需要重映射 */
 	JTAG_Disable();
@@ -55,8 +63,9 @@ int main(void)
 	/* 初始化LED */
 	LED_Init();
 	
-	/* 初始化串口，便于调试 */
+	/* 初始化串口2(仅调试用) */
 	USART1_Init(115200);
+	
 #ifdef DEBUG
 		printf("\r\nDebug mode\r\n");
 #endif		
@@ -69,28 +78,23 @@ int main(void)
 	OLED_Config();
 	OLED_Clear();
 	
-	/* 初始化电容按键模块 */
+	/* 初始化电容按键模块，以及初始化MPR121 IRQ引脚为输入浮空态 */
 	Key_Init();
 	MPR_IRQ_Init();
 	
 	/* 管理员判定 */
-	if(Admin_Check() == 1)
-	{
-		CurrentWindowMode = WindowMode_Admin;
-	}
-	else
-	{
-		CurrentWindowMode = WindowMode_User;
-	}
+	Task_AdminCkeck();
 	
+	/* 指纹模块初始化 */
 	Fingerprint_Init();
 	
+	/* 门锁电机模块初始化 */
 	Motor_Init();
 	
-	// SPI2 需要开启
-	RFID_Init();
+	/* 射频识别模块使能 */
+	RFID_Init();// SPI2 需要提前初始化
 	
-	/* 按键模块 IRQ Pin Init */
+	/* 电容 按键MPR121 IRQ 引脚 关联外中断3 初始化*/
 	EXTI3_Init();
 	
 	/* 定时器3初始化并使能其上溢中断 */
@@ -99,26 +103,54 @@ int main(void)
 	/* 允许全局中断 */
 	__set_PRIMASK(0); 
 	
-	/* 等待系统稳定 */	
+	/* 等待系统稳定 */
+	Delay(1000);
 	
 	while(1)
 	{
-		if(MG200_DETECT_Status() == SET)
-		{
-			CurrentWindowMode = WindowMode_User;
-			CurrentUserMode = UserSubMode_Finger;
-		}
-		else
-		{
-			CurrentUserMode = UserSubMode_Password;
-		}
-		Window_MainTask();
+		Task_FingerIdentify();
+		Task_RFIDIdentify();
+		Task_WindowMain();
 	}
 	
 	/* No Retval */
 }
 
-void JTAG_Disable(void)
+void RTC_DispClock(void)
+{
+	static TimeStu ZeroTime = {2019,8,4,8,0,0,0};
+	
+	TimeStu Time = {0};
+	
+	if(TimeDisplay == 1)
+	{
+		Read_RTCTime(&Time);
+		
+		if(Time.Year != ZeroTime.Year)
+		{
+			Set_RTCTime(&ZeroTime);
+		}
+		else
+		{
+		}
+		
+		GUI_DisplayNumber(0,0,Time.Year,2,2);
+		GUI_DisplayNumber(0,16,Time.Month,2,2);
+		GUI_DisplayNumber(0,32,Time.Date,2,2);
+		GUI_DisplayNumber(0,64,Time.Hour,2,2);
+		GUI_DisplayNumber(0,88,Time.Minute,2,2);
+		GUI_DisplayNumber(0,112,Time.Second,2,2);
+		
+		TimeDisplay = 0;
+	}
+	else
+	{
+		
+	}
+	
+}
+
+static void JTAG_Disable(void)
 {
 	/* 重映射 */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
@@ -127,89 +159,65 @@ void JTAG_Disable(void)
 	return ;
 }
 
-
-// RFID init
-
-void RFID_CardSearch(void)
+static void NVIC_Config(void)
 {
-	u8 CardType[2] = {0};
-	u8 SerialNum[4] = {0};
+	NVIC_InitTypeDef NVIC_InitStructure;
+
+//	/* Configure one bit for preemption priority */
+//	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+
+	/* Enable the RTC Interrupt */
+	NVIC_InitStructure.NVIC_IRQChannel = RTC_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
 	
-	/* 寻卡 */
-	if(PcdRequest(PICC_REQALL,CardType) == MI_OK)
-	{
-		printf("CardType = %d%d\r\n",CardType[0],CardType[1]);
-		Voice_Play(VoiceCmd_Di);
-		/* 防冲撞 */
-		if(PcdAnticoll(SerialNum) == MI_OK)
-		{
-			printf("SerialNum = %2x%2x%2x%2x\r\n",SerialNum[0],SerialNum[1],SerialNum[2],SerialNum[3]);
-			/* 选卡 */
-			if(PcdSelect(SerialNum) == MI_OK)
-			{	
-			}
-		}
-	}
+	return ;
 }
 
-
-void Fingerprint_NewTask(void)
+void RCC_Config(void)
 {
-	u8 IDTemp,Result;
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);	 
+	PWR_BackupAccessCmd(ENABLE);
 	
-	if(MG200_DETECT_Status() == SET)
+	return ;
+}
+
+static void Task_AdminCkeck(void)
+{
+	if(Admin_Check() == 1)
 	{
-		Finger_EraseAllUser(&Result);
-		
-		Voice_Play(VoiceCmd_Di);
-		IDTemp = 0x00;// 使用自动分配
-		if(Finger_EnrollNewUser(IDTemp) == 0)
-		{
-			printf("Add new user success\r\n");
-		}
-		else
-		{
-			printf("Could new a user\r\n");
-		}
-		
-		while(MG200_DETECT_Status() != RESET)
-		{
-		}
-		
-		while(MG200_DETECT_Status() != SET)
-		{
-		}
-		
-		if(Finger_Compare(&IDTemp) != 0)
-		{
-			printf("No find user\r\n");
-		}
-		else
-		{
-			printf("User ID is %d\r\n",IDTemp);
-		}
-		
-		while(MG200_DETECT_Status() != RESET)
-		{
-		}
-		
-//		if(Finger_CaptureAndExtract(3) == 0)
-//		{
-//			Voice_Play(VoiceCmd_Di);
-//			
-//			
-//		}
-//		else
-//		{
-//		}
-		
+		CurrentWindowMode = WindowMode_Admin;
 	}
 	else
 	{
-		
+		CurrentWindowMode = WindowMode_User;
 	}
 }
 
+static void Task_FingerIdentify(void)
+{
+	if(MG200_DETECT_Status() == SET)
+	{
+		CurrentWindowMode = WindowMode_User;
+		CurrentUserMode = UserSubMode_Finger;
+	}
+	else
+	{
+		CurrentUserMode = UserSubMode_Password;
+	}
+}
+
+static void Task_RFIDIdentify(void)
+{
+	GUI_RFID_CompareCard();
+}
+
+//static void Task_DoorMange(void)
+//{
+//	/* 门状态控制 */
+//}
 
 /* Exported functions --------------------------------------------------------*/
 
@@ -250,7 +258,6 @@ u8 Admin_Check(void)
 		return 1;
 	}
 }
-
 
 //Redirect fputc function
 int fputc(int ch,FILE *stream)

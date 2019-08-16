@@ -95,14 +95,31 @@ void GUI_Finger_Compare(void)
 	if(Finger_Compare(&Finger_ID) == 0)
 	{
 		Voice_Play(VoiceCmd_DOOROPEN_SUCCESS);
+		
+		Motor_OpenLock();
+		
+		GUI_ClearScreen();
+		GUI_DisplayPicture(32,0,64,64,&Fingerprint_64px[0][0]);
+		GUI_DisplayString(2,48,&IdentifyString_16x16[0][0],2);
+		GUI_DisplayString(4,48,&SuccessString_16x16[0][0],2);
+		
 	}
 	else
 	{
+		GUI_ClearScreen();
+		GUI_DisplayPicture(32,0,64,64,&Fingerprint_64px[0][0]);
 		GUI_DisplayString(2,48,&IdentifyString_16x16[0][0],2);
 		GUI_DisplayString(4,48,&FailString_16x16[0][0],2);
 		
 		Delay(1000);
 	}
+	
+	/* 等待手指松开 */
+	while(MG200_DETECT_Status() != RESET)
+	{
+	}
+	
+	GUI_ClearScreen();
 	
 	return ;
 }

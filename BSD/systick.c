@@ -28,6 +28,7 @@ Notice    :±¾³ÌÐòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßÐí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾¡£°æÈ¨ËùÓÐ£¬µÁ°
 * LOCAL VARIABLES
 */
 
+
 /**********************************************************************************************
 * LOCAL FUNCTIONS  DECLARE
 */
@@ -73,8 +74,6 @@ void delay_s(u32 xs)
 	SysTick->CTRL |=(1<<0); //¿ªÆô¼ÆÊ±
 	while(!(SysTick->CTRL&(1<<16)));
 	SysTick->CTRL &=~(1<<0); //½ûÖ¹¼ÆÊ±
-
-
 }
 
 /*******************************************************************
@@ -83,17 +82,51 @@ void delay_s(u32 xs)
 * ×÷Õß£º         Ð»¹úÇä 
 * ²ÎÊýËµÃ÷£º     ¶àÉÙºÁÃë
 * ·µ»ØÖµËµÃ÷£º   ÎÞ
-* ÐÞ¸Ä¼ÇÂ¼£º
+* ÐÞ¸ÄÈË:		LukeLiu
+* ÐÞ¸Ä¼ÇÂ¼£º	¹²ÏíËø¶¨
 * ÆäËû£º
 *******************************************************************/
 void delay_ms(u32 xms)
 {
-	SysTick->VAL=0;
-	SysTick->LOAD=(72000/8)*xms;
-	SysTick->CTRL |=(1<<0); //¿ªÆô¼ÆÊ±
-	while(!(SysTick->CTRL&(1<<16)));
-	SysTick->CTRL &=~(1<<0); //½ûÖ¹¼ÆÊ±
-
+	if(SystickLock == 1)
+	{
+		if(SystickValueSave == 0)
+		{
+			SystickValueSave = SysTick->LOAD - SysTick->VAL;
+		}
+		else
+		{
+			
+		}
+		
+		SysTick->VAL=0;
+		SysTick->LOAD=(72000/8)*xms;
+		SysTick->CTRL |=(1<<0); //¿ªÆô¼ÆÊ±
+		while(!(SysTick->CTRL&(1<<16)));
+		SysTick->CTRL &=~(1<<0); //½ûÖ¹¼ÆÊ±
+		
+		SysTick->VAL=0;
+		SysTick->LOAD = SystickValueSave + 1;
+		SysTick->CTRL |=(1<<0); //¿ªÆô¼ÆÊ±
+		
+		return ;
+	}
+	else
+	{
+		SystickLock = 1;
+		
+		SysTick->VAL=0;
+		SysTick->LOAD=(72000/8)*xms;
+		SysTick->CTRL |=(1<<0); //¿ªÆô¼ÆÊ±
+		while(!(SysTick->CTRL&(1<<16)));
+		SysTick->CTRL &=~(1<<0); //½ûÖ¹¼ÆÊ±
+		
+		SystickValueSave = 0;
+		
+		SystickLock = 0;
+	}
+	
+	return ;
 }
 
 /*******************************************************************
@@ -107,11 +140,47 @@ void delay_ms(u32 xms)
 *******************************************************************/
 void delay_us(u32 xus)
 {
-	SysTick->VAL=0;
-	SysTick->LOAD=(72/8)*xus;
-	SysTick->CTRL |=(1<<0); //¿ªÆô¼ÆÊ±
-	while(!(SysTick->CTRL&(1<<16)));
-	SysTick->CTRL &=~(1<<0); //½ûÖ¹¼ÆÊ±
+//	
+	
+	if(SystickLock == 1)
+	{
+		if(SystickValueSave == 0)
+		{
+			SystickValueSave = SysTick->LOAD - SysTick->VAL;
+		}
+		else
+		{
+			
+		}
+		
+		SysTick->VAL=0;
+		SysTick->LOAD=(72/8)*xus;
+		SysTick->CTRL |=(1<<0); //¿ªÆô¼ÆÊ±
+		while(!(SysTick->CTRL&(1<<16)));
+		SysTick->CTRL &=~(1<<0); //½ûÖ¹¼ÆÊ±
+		
+		SysTick->VAL=0;
+		SysTick->LOAD = SystickValueSave + 1;
+		SysTick->CTRL |=(1<<0); //¿ªÆô¼ÆÊ±
+		
+		return ;
+	}
+	else
+	{
+		SystickLock = 1;
+		
+		SysTick->VAL=0;
+		SysTick->LOAD=(72/8)*xus;
+		SysTick->CTRL |=(1<<0); //¿ªÆô¼ÆÊ±
+		while(!(SysTick->CTRL&(1<<16)));
+		SysTick->CTRL &=~(1<<0); //½ûÖ¹¼ÆÊ±
+		
+		SystickValueSave = 0;
+		
+		SystickLock = 0;
+		
+		return ;
+	}
 }
 
 /***********************************************************************************************

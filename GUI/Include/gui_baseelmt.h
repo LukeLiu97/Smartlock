@@ -32,14 +32,19 @@ extern void OLED_Clear(void);
 /* Exported macro ------------------------------------------------------------*/
 
 #define GUI_ClearScreen OLED_Clear
+#define GUI_ClearPart	OLED_ClearPart 
 /* Exported functions ------------------------------------------------------- */
 
 void GUI_ReversalEnable(void);
 void GUI_ReversalDisable(void);
 
 void GUI_DisplayPassBox(u8 RowNumber,u8 *Str);
+void GUI_Show8StrTextBox(u8 RowNumber,u8 RowHeight,u8 *Str);
 void GUI_DisplayString(u8 RowNumber,u8 Column,const u8 *StringFont,u8 StringLength);
+void GUI_ShowOperationTipRow(u8 RowNumber,u8 RowHeight);// 显示文字 按#确认 按*取消
+
 void GUI_DisplayPicture(u8 x,u8 y,u8 px,u8 py,const u8 *Picture);
+void GUI_DisplayNumber(u8 RowNumber,u8 Column,u32 Number,u8 ShowLength,u8 FontSize);
 
 #ifdef __cplusplus
 }

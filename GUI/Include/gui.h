@@ -19,6 +19,9 @@
 #include "gui_baseelmt.h"
 #include "gui_finger.h"
 #include "gui_password.h"
+#include "gui_rfid.h"
+#include "gui_clock.h"
+#include "gui_menu.h"
 
 
 /* Exported types ------------------------------------------------------------*/

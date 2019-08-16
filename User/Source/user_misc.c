@@ -1,14 +1,14 @@
 /**
 ******************************************************************************
-  * @file       user_string.c
-  * @brief      用户自定的字符串函数
+  * @file       user_mic.c
+  * @brief      用户自定的函数
   * @version    1.0
   * @date       Aug-14-2019 Wed
 ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "user_string.h"
+#include "user_misc.h"
 
 /** @addtogroup 
   * @{
@@ -87,6 +87,68 @@ s32 String_ViolentMatch(const u8 *TargetString,const u8 *MatchingString)
 		}
 	}
 }
+
+u8 HashCompare(const u8 *Key1,const u8 *Key2,u8 Length)
+{
+	for(u32 i = 0;i < Length;i++)
+	{
+		if(Key1[i] != Key2[i])
+		{
+			return 1;
+		}
+		else
+		{
+			
+		}
+	}
+	
+	return 0;
+}
+
+u8 FakePassword_Check(u8 *TagetStr,u8 *MatchStr)
+{	
+	s32 Place;
+	//Place = String_ViolentMatch(StringBuff,SmartLock.UserPassword);
+	Place = String_ViolentMatch(TagetStr,MatchStr);
+	
+#ifdef DEBUG
+	printf("Place = %d\r\n",Place);
+#endif
+	
+	if(Place == -1)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+void ArrayBackward(u8 *Array,u8 Length)
+{
+	u8 First = Array[0];
+	u32 i;
+	for(i = 0;i < Length - 1;i++)
+	{
+		Array[i] = Array[i + 1];
+	}
+	Array[i] = First;
+}
+
+void ArrayForward(u8 *Array,u8 Length)
+{
+	u8 Last = Array[Length - 1];
+	u32 i;
+	for(i = Length - 1;i > 0;i--)
+	{
+		Array[i] = Array[i - 1];
+	}
+	Array[i] = Last;
+}
+
+
+
 
 /**
   * @}
