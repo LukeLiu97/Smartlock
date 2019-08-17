@@ -176,10 +176,14 @@ u8 GUI_RFID_ReadCard(u8 DataBlockAddr, u8 ControlBlockAddr,u8 (*ReadData)[16])
 void GUI_RFID_CompareCard(void)
 {
 	u8 ReadDataTemp[16];
+	
 	if(GUI_RFID_ReadCard(61,63,&ReadDataTemp) == 0)
 	{
 		Voice_Play(VoiceCmd_Di);
+		
+		GUI_ReversalEnable();
 		GUI_DisplayPicture(32,0,64,64,&RFIDCard_64px[0][0]);
+		GUI_ReversalDisable();
 		
 		if(HashCompare(ReadDataTemp,SmartLock.IDCardHash,sizeof(SmartLock.IDCardHash)) == 0)
 		{

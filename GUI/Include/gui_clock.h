@@ -16,10 +16,26 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "stm32f10x.h"
+
+#include "gui_baseelmt.h"
+#include "gui_menu.h"	
+#include "ui.h"	 
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+typedef enum
+{
+	ClockSubMenu_Father 	= 0,
+	ClockSubMenu_Clock		= 1,
+	ClockSubMenu_Date		= 2,
+}ClockSubMenu_TypeDef;
+
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
+
+void GUI_CLOCK_SettingTime(u32 *LastSubMenu);	 
+void GUI_CLOCK_SettingDate(u32 *LastSubMenu);	 
 
 #ifdef __cplusplus
 }

@@ -32,7 +32,10 @@ extern u8 PasswordA[6];// Ä¬ÈÏÃÜÂëÔÝ²»ÐÞ¸Ä
 	 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
+
+u8 RFID_CardSelect(u8 (*SerialNum)[4]);	 
 void GUI_RFID_AuthorizeNewCard(void);
+u8 GUI_RFID_ReadCard(u8 DataBlockAddr, u8 ControlBlockAddr,u8 (*ReadData)[16]);
 void GUI_RFID_CompareCard(void);
 	 
 #ifdef __cplusplus
