@@ -26,6 +26,8 @@ SmartLockStu SmartLock =
 	{'2','0','1','9','0','8','0','8','2','0','1','9','0','8','0','8',}
 };
 
+u8 StringBuff[BUFF_LENGTH] = {0}; //  ‰»Îª∫≥Â«¯
+
 u8 CurrentWindowMode = 0;
 u8 CurrentUserMode = 0;
 u8 ReversalFlag = 0;

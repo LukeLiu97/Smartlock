@@ -52,8 +52,13 @@ extern u32 UnBusy_Count;
 
 extern u32 TimeDisplay;
 
+#define BUFF_LENGTH 256  // 定义输入缓冲区长度
+extern u8 StringBuff[BUFF_LENGTH];
+
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
+
+
 /* Exported functions ------------------------------------------------------- */
 
 #ifdef __cplusplus

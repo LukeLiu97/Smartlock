@@ -24,20 +24,18 @@ extern u8 ReversalFlag;	 // 显示翻转标志
 /* Private variables ---------------------------------------------------------*/
 
 u8 Password[7] = "201988"; // 初始密码
-u8 StringBuff[BUFF_LENGTH] = {0}; // 输入缓冲区
+//u8 StringBuff[BUFF_LENGTH] = {0}; // 输入缓冲区
 
 /* Private function prototypes -----------------------------------------------*/
 
-void Password_Input(void);
+u8 Password_Input(void);
 
 extern u8 Admin_Check(void);
 
 static void Admin_Mode(void);
 
-void ArrayForward(u8 *Array,u8 Length);
-void ArrayBackward(u8 *Array,u8 Length);
-
-static void Password_Input(void);
+//extern void ArrayForward(u8 *Array,u8 Length);
+//extern void ArrayBackward(u8 *Array,u8 Length);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -54,65 +52,56 @@ void OLED_ShowWaitRow(u8 RowNumber,u8 RowHeight)
 }
 
 
-void Password_Input(void)
+u8 Password_Input(void)
 {
-	u32 i;
+	static u32 i = 0;
 	u8 KeyValue;
 	
-	for(i = 0; i < (BUFF_LENGTH - 1) ; )
+	LED3_OFF();
+	
+	KeyValue = Key_Scan();
+		
+	if(KeyValue != 0)/* 电容模块检测到按键变化 */
 	{
-		LED3_OFF();
-		
-		if(CurrentWindowMode == WindowMode_AllClear)
-		{
-			return ;
-		}
-		else
-		{
-		}
-		
-		KeyValue = Key_Scan();
-			
-		if(KeyValue != 0)/* 电容模块检测到按键变化 */
-		{
 #ifdef DEBUG
-			printf("KeyValue = %c\r\n",KeyValue);
+		printf("KeyValue = %c\r\n",KeyValue);
 #endif
 			
-			Voice_Play(VoiceCmd_Di);
-			
-			if(KeyValue == '#')
+		Voice_Play(VoiceCmd_Di);
+		
+		if(KeyValue == '#' || i > BUFF_LENGTH - 2)
+		{
+			StringBuff[i] = 0;
+			i = 0;
+			return 0;
+		}
+		else if(KeyValue == '*')
+		{
+			if(i == 0)
 			{
-				break;
-			}
-			else if(KeyValue == '*')
-			{
-				if(i == 0)
-				{
-					// Don't do anything
-				}
-				else
-				{
-					i -= 1;
-				}
-				StringBuff[i] = 0; // 现在i向后退一位
+				// Don't do anything
 			}
 			else
 			{
-				StringBuff[i] = KeyValue;// 当前输入被记录至缓存区对应位置
-				i++; // i 前进一位，为下次输入准备
+				i -= 1;
 			}
+			StringBuff[i] = 0; // 现在i向后退一位
 		}
 		else
 		{
+			StringBuff[i] = KeyValue;// 当前输入被记录至缓存区对应位置
+			i++; // i 前进一位，为下次输入准备
 		}
-		
-		GUI_Show8StrTextBox(4,2,StringBuff);
-		GUI_Show8StrTextBox(6,2,StringBuff + 8);
 	}
-	StringBuff[i] = 0;
+	else
+	{
+	}
 	
-	return ;
+	GUI_Show8StrTextBox(4,2,StringBuff);
+	GUI_Show8StrTextBox(6,2,StringBuff + 8);
+//	StringBuff[i] = 0;
+	
+	return 1;
 }
 
 
@@ -149,27 +138,25 @@ void Admin_Mode(void)
 
 void User_PasswordMode(void)
 {
-	static u8 FirstFlag = 0;
+//	static u8 FirstFlag = 0;
 	static u8 ErrorCount = 0;
 	// TODO 密码输入界面
 	
-	if(Key_Scan() != 0 || FirstFlag == 0)
-	{
-		
-		if(FirstFlag == 0)
-		{
-			FirstFlag = 1;
-		}
-		else
-		{
-		}
+//	if( FirstFlag == 0)
+//	{
+//		
+//		if(FirstFlag == 0)
+//		{
+//			FirstFlag = 1;
+//		}
+//		else
+//		{
+//		}
 		
 		GUI_ShowOperationTipRow(0,2);// 显示"按#确认 按*删除"
 		GUI_DisplayString(2,24,&String2_16xN[0][0],5);// “请输入密码”
 
-		// TODO 依据按键输入情况处理缓冲区 + 刷新密码输入区
 
-		Password_Input(); // 内部调用了OLED_ShowTextBox()用以实时显示输入状况
 
 		if(CurrentWindowMode == WindowMode_AllClear)
 		{
@@ -179,26 +166,34 @@ void User_PasswordMode(void)
 		{
 		}
 
-		#ifdef DEBUG
-		printf("StringBuff = \"%s\"\r\n",StringBuff);
-		#endif		
+//		#ifdef DEBUG
+//		printf("StringBuff = \"%s\"\r\n",StringBuff);
+//		#endif		
 
-		if(FakePassword_Check(StringBuff,SmartLock.UserPassword) == 1)
+		// TODO 依据按键输入情况处理缓冲区 + 刷新密码输入区
+
+		if(Password_Input() == 0) // 内部调用了OLED_ShowTextBox()用以实时显示输入状况
 		{
-			printf("Password right\r\n");
-			Voice_Play(VoiceCmd_DOOROPEN_SUCCESS);
-			Motor_OpenLock();
-			ErrorCount = 0;
+			if(FakePassword_Check(StringBuff,SmartLock.UserPassword) == 1)
+			{
+				printf("Password right\r\n");
+				Voice_Play(VoiceCmd_DOOROPEN_SUCCESS);
+				Motor_OpenLock();
+				ErrorCount = 0;
+			}
+			else
+			{
+				printf("Password wrong\r\n");
+				Voice_Play(VoiceCmd_PASSWORD_INCONFORMITY);
+				Motor_CloseLock();
+				ErrorCount++;
+			}
+			memset(StringBuff,0,sizeof(StringBuff));// 清空输入缓存
 		}
 		else
 		{
-			printf("Password wrong\r\n");
-			Voice_Play(VoiceCmd_PASSWORD_INCONFORMITY);
-			Motor_CloseLock();
-			ErrorCount++;
+			
 		}
-		
-		memset(StringBuff,0,sizeof(StringBuff));// 清空输入缓存区
 		
 		if(ErrorCount > 2)
 		{
@@ -213,13 +208,6 @@ void User_PasswordMode(void)
 		else
 		{
 		}
-		
-	}
-	else
-	{
-	
-	}
-	
 	
 	
 	return ;
@@ -519,7 +507,7 @@ void IDCard_Mange(u8 MenuElmt)
 	}
 	else
 	{
-		// 删除用户任务
+		// TODO 删除用户任务
 	}
 }
 

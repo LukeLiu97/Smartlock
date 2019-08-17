@@ -181,6 +181,8 @@ void GUI_RFID_CompareCard(void)
 	{
 		Voice_Play(VoiceCmd_Di);
 		
+		GUI_ClearScreen();
+		
 		GUI_ReversalEnable();
 		GUI_DisplayPicture(32,0,64,64,&RFIDCard_64px[0][0]);
 		GUI_ReversalDisable();

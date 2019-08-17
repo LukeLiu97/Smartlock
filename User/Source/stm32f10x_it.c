@@ -219,7 +219,7 @@ void TIM3_IRQHandler(void)
 		if(UnBusy_Count > 12 && CurrentWindowMode != WindowMode_Setting)
 		{
 			CurrentWindowMode = WindowMode_AllClear;
-			
+						
 			if(UnBusy_Count > 30)
 			{
 				printf("Free status\r\n");
