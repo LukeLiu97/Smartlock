@@ -104,7 +104,15 @@ void GUI_Show8StrTextBox(u8 RowNumber,u8 RowHeight,u8 *Str)
 
 void GUI_DisplayNumber(u8 RowNumber,u8 Column,u32 Number,u8 ShowLength,u8 FontSize)
 {	
-	if(FontSize == 2) // 8 x 16×ÖÌå
+	if(FontSize == 1) // 4 x 8×ÖÌå
+	{
+		for(u32 i = ShowLength - 1 ;i < ShowLength;i--)
+		{
+			OLED_Show_XxN8_Character(RowNumber,Column + i * 4,1,4,&Number_4x8[Number % 10 ][0]);
+			Number /= 10;
+		}
+	}
+	else if(FontSize == 2) // 8 x 16×ÖÌå
 	{
 		for(u32 i = ShowLength - 1 ;i < ShowLength;i--)
 		{

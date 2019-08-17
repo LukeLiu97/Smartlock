@@ -83,14 +83,15 @@ void GUI_Finger_EraseAllUser(void)
 
 void GUI_Finger_Compare(void)
 {
-	/* 实时性不高，会卡住休眠 */
-	
 	u8 Finger_ID;
 	
 	Voice_Play(VoiceCmd_Di);
 	
 	GUI_ClearScreen();
+	
+	GUI_ReversalEnable();
 	GUI_DisplayPicture(32,0,64,64,&Fingerprint_64px[0][0]);
+	GUI_ReversalDisable();
 	
 	if(Finger_Compare(&Finger_ID) == 0)
 	{

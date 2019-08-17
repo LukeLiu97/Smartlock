@@ -116,52 +116,6 @@ void Password_Input(void)
 }
 
 
-u8 Menu_Move(u8 *MenuList,u8 MenuListLenth)
-{
-	u8 KeyValue;
-	
-	LED3_OFF();
-		
-	KeyValue = Key_Scan();
-		
-	if(KeyValue != 0)/* 电容模块检测到按键变化 */
-	{
-#ifdef DEBUG
-		printf("KeyValue = %c\r\n",KeyValue);
-#endif
-			
-		Voice_Play(VoiceCmd_Di);
-		
-		if(KeyValue == '#')
-		{
-			return MenuPlace_Check;
-		}
-		else if(KeyValue == '*')
-		{
-			return MenuPlace_Back;
-		}
-		else if(KeyValue == '2')
-		{
-			ArrayForward(MenuList,MenuListLenth);
-			return MenuPlace_Shift;
-			
-		}
-		else if(KeyValue == '8')
-		{
-			ArrayBackward(MenuList,MenuListLenth);
-			return MenuPlace_Shift;
-		}
-		else
-		{
-		}
-	}
-	else
-	{
-	}
-	
-	return MenuPlace_NoEnter;;
-}
-
 void Admin_Mode(void)
 {	
 	GUI_DisplayString(0,32,&String3_16xN[0][0],4);// 居中显示“设置菜单”
@@ -219,7 +173,7 @@ void User_PasswordMode(void)
 
 		if(CurrentWindowMode == WindowMode_AllClear)
 		{
-		return ;
+			return ;
 		}
 		else
 		{
@@ -243,7 +197,9 @@ void User_PasswordMode(void)
 			Motor_CloseLock();
 			ErrorCount++;
 		}
-
+		
+		memset(StringBuff,0,sizeof(StringBuff));// 清空输入缓存区
+		
 		if(ErrorCount > 2)
 		{
 			for(u32 i = 0 ;i<10;i++)
@@ -285,6 +241,9 @@ void SubMenu_Change(u32 *NextSubMenu,u8 MenuCurrentPlace)
 		case SubMenu_IDCardMange-1:
 			*NextSubMenu = SubMenu_IDCardMange;
 			break;
+		case SubMenu_ClockSetting-1:
+			*NextSubMenu = SubMenu_ClockSetting;
+			break;
 		default:
 			*NextSubMenu = SubMenu_Start;
 	}
@@ -293,29 +252,30 @@ void SubMenu_Change(u32 *NextSubMenu,u8 MenuCurrentPlace)
 void Menu_Start(u32 *LastMenu)
 {
 	// 字符串顺序关联用户设置菜单顺序，这里使用的是设置菜单子菜单枚举结构体的顺序
-	const u8 *Str[4] = 
+	const u8 *Str[5] = 
 	{
 		&(MenuString1_16x16[0][0]),// “修改用户密码”
 		&(MenuString2_16x16[0][0]),// “声音模式”
 		&(MenuString3_16x16[0][0]),// “登记指纹”
 		&(MenuString4_16x16[0][0]),// “登记卡片”
+		&(MenuString5_16x16[0][0]),// “时钟设置”
 	};
-	const u8 StrLenArray[4] = {6,4,4,4};
+	const u8 StrLenArray[5] = {6,4,4,4,4};
 	
-	static u8 CurrentPlace[4] = {0,1,2,3};
+	static u8 CurrentPlace[5] = {0,1,2,3,4};
 	
-	switch (Menu_Move(CurrentPlace,4))
+	switch (Menu_Move(CurrentPlace,5))
 	{
 		case MenuPlace_Check:
 			SubMenu_Change(LastMenu,CurrentPlace[1]);
-			OLED_Clear();
+			GUI_ClearScreen();
 			break;
 		case MenuPlace_Back:
-			OLED_Clear();
+			GUI_ClearScreen();
 			CurrentWindowMode = WindowMode_User;
 			break;
 		case MenuPlace_Shift:
-			OLED_Clear();
+			GUI_ClearScreen();
 			break;
 		default:
 			break;
@@ -330,7 +290,7 @@ void Menu_Start(u32 *LastMenu)
 	
 	if(*LastMenu != SubMenu_Start)
 	{
-		OLED_Clear();
+		GUI_ClearScreen();
 	}
 	else
 	{
@@ -352,10 +312,6 @@ void Mute_Setting(u8 MenuElmt)
 	}
 }
 
-//void Password_Change(u8 MenuElmt)
-//{
-//	
-//}
 
 void Menu_PasswordChange(u32 *LastMenu)
 {
@@ -379,8 +335,8 @@ void Menu_MuteSetting(u32 *LastMenu)
 {
 	const u8 *Str[2] = 
 	{
-		&(MuteString1_16x16[0][0]),
-		&(MuteString2_16x16[0][0])
+		&(MuteString1_16x16[0][0]),// 静音
+		&(MuteString2_16x16[0][0]) // 语音
 	};
 	const u8 StrLenArray[2] = {2,2};
 	
@@ -390,14 +346,14 @@ void Menu_MuteSetting(u32 *LastMenu)
 	{
 		case MenuPlace_Check:
 			Mute_Setting(CurrentPlace[0]);
-			OLED_Clear();
+			GUI_ClearScreen();
 			break;
 		case MenuPlace_Back:
 			*LastMenu = SubMenu_Start;
-			OLED_Clear();
+			GUI_ClearScreen();
 			break;
 		case MenuPlace_Shift:
-			OLED_Clear();
+			GUI_ClearScreen();
 			break;
 		default:
 			break;
@@ -412,7 +368,77 @@ void Menu_MuteSetting(u32 *LastMenu)
 	
 	if(*LastMenu != SubMenu_MuteSetting)
 	{
-		OLED_Clear();
+		GUI_ClearScreen();
+	}
+	else
+	{
+	}
+	
+	return ;
+}
+
+void Clock_Setting(u8 MenuElmt)
+{
+	static u32 ClockSubMenu = ClockSubMenu_Father;
+	
+	GUI_ClearScreen();
+	do
+	{
+		switch(MenuElmt)
+		{
+			case ClockSubMenu_Clock - 1:// 菜单第一项是 "修改时间"
+				GUI_CLOCK_SettingTime(&ClockSubMenu);
+				break;
+			case ClockSubMenu_Date - 1:
+				GUI_CLOCK_SettingDate(&ClockSubMenu);
+				break;
+			default:
+				ClockSubMenu = ClockSubMenu_Father;
+			
+		}
+	}while(ClockSubMenu != ClockSubMenu_Father);
+	
+	return ;
+}
+
+void Menu_ClockSetting(u32 *LastMenu)
+{
+	const u8 *Str[2] = 
+	{
+		&(ClockSettingTimeString_16x16[0][0]),// 修改时间
+		&(ClockSettingDateString_16x16[0][0]) // 修改日期
+	};
+	const u8 StrLenArray[2] = {4,4};
+	
+	static u8 CurrentPlace[2] = {0,1};
+	
+	switch (Menu_Move(CurrentPlace,2))
+	{
+		case MenuPlace_Check:
+			Clock_Setting(CurrentPlace[0]);
+			GUI_ClearScreen();
+			break;
+		case MenuPlace_Back:
+			*LastMenu = SubMenu_Start;
+			GUI_ClearScreen();
+			break;
+		case MenuPlace_Shift:
+			GUI_ClearScreen();
+			break;
+		default:
+			break;
+	}
+	
+	OLED_ShowString(0,2,32,&MenuString5_16x16[0][0],4); // 居中显示“时钟设置”
+	
+	ReversalFlag = 1;
+	OLED_ShowString(CurrentPlace[0] * 2 + 2,2,0,Str[CurrentPlace[0]],StrLenArray[CurrentPlace[0]]);
+	ReversalFlag = 0;
+	OLED_ShowString(CurrentPlace[1] * 2 + 2,2,0,Str[CurrentPlace[1]],StrLenArray[CurrentPlace[1]]);
+	
+	if(*LastMenu != SubMenu_ClockSetting)
+	{
+		GUI_ClearScreen();
 	}
 	else
 	{
@@ -547,7 +573,7 @@ void Window_AdminMode(void)
 {
 	Admin_Mode();
 	memset(StringBuff,0,sizeof(StringBuff));// 清空输入缓存区
-	OLED_Clear();
+	GUI_ClearScreen();
 	
 	CurrentWindowMode = WindowMode_Setting;
 	
@@ -557,33 +583,32 @@ void Window_AdminMode(void)
 void Window_UserMode(void)
 {
 	// 默认用户子模式 CurrentUserMode = UserSubMode_Password;
-	
 	static u8 FirstFlag = 0;
 	
 	if(FirstFlag == 0)
 	{
-		OLED_Clear();
+		GUI_ClearScreen();
 		OLED_ShowPicture(28,0,72,64,&(Logo_72x64[0][0]));
 		Delay(1000);
 		FirstFlag = 1;
+		GUI_ClearScreen();
 	}
 	else
 	{
 		switch(CurrentUserMode)
 		{
 			case UserSubMode_Password:
-				OLED_Clear();
 				User_PasswordMode();
 				break;
 			case UserSubMode_Finger:
 				GUI_Finger_Compare();
 				break;
+//			case UserSubMode_RFID:
+//				GUI_RFID_CompareCard();
+//				break;
 			default:
 				CurrentUserMode = UserSubMode_Password;
 		}
-		
-		
-		memset(StringBuff,0,sizeof(StringBuff));// 清空输入缓存区
 	}
 	
 	return ;
@@ -610,6 +635,9 @@ void Window_SettingMode(void)
 		case SubMenu_IDCardMange:
 			Menu_IDCardMange(&CurrentMenu);
 			break;
+		case SubMenu_ClockSetting:
+			Menu_ClockSetting(&CurrentMenu);
+			break;
 		default:
 			CurrentMenu = SubMenu_Start;
 	}
@@ -634,7 +662,7 @@ void Task_WindowMain(void)
 			Window_SettingMode();
 			break;
 		default:
-			OLED_Clear();
+			GUI_ClearScreen();
 	}
 }
 
