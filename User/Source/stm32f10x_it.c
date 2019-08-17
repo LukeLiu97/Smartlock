@@ -274,7 +274,7 @@ void USART2_IRQHandler(void)
   */
 void RTC_IRQHandler(void)
 {
-//	static u32 Count = 0;
+	static u32 Count = 0;
 	
 	if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
 	{
@@ -283,15 +283,15 @@ void RTC_IRQHandler(void)
 
 	/* Interrupt Task */
 		
-//	if(Count >= 5)
-//	{
-//		TimeDisplay = 1;
-//		Count = 0;
-//	}
-//	else
-//	{
-//		Count++;
-//	}
+	if(Count >= 5)
+	{
+		TimeDisplay = 1;
+		Count = 0;
+	}
+	else
+	{
+		Count++;
+	}
 
 	/* Wait until last write operation on RTC registers has finished */
 	RTC_WaitForLastTask();

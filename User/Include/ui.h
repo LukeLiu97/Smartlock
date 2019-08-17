@@ -45,15 +45,6 @@ typedef enum
 	WindowMode_Setting	= 3
 }WindowMode_TypeDef;
 
-
-typedef enum
-{
-	MenuPlace_NoEnter	= 0,
-	MenuPlace_Check 	= 1,
-	MenuPlace_Back		= 2,
-	MenuPlace_Shift		= 3
-}MenePlace_TypeDef;
-
 typedef enum
 {
 	SubMenu_Start 			= 0,
@@ -61,6 +52,7 @@ typedef enum
 	SubMenu_MuteSetting		= 2,
 	SubMenu_FingerMange		= 3,
 	SubMenu_IDCardMange		= 4,
+	SubMenu_ClockSetting	= 5,
 }SubMenu_TypeDef;
 
 typedef enum

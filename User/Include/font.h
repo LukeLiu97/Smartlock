@@ -33,7 +33,9 @@ extern const u8 MenuString1_16x16[12][16];
 extern const u8 MenuString2_16x16[8][16];
 extern const u8 MenuString3_16x16[8][16];
 extern const u8 MenuString4_16x16[8][16];
+extern const u8 MenuString5_16x16[8][16];
 	 
+extern const u8 Number_4x8[10][4];
 extern const u8 Number_8x16[10][16];
 extern const u8 Number_12x24[10][36];
 
@@ -42,6 +44,9 @@ extern const u8 MuteString2_16x16[4][16];
 
 extern const u8 UserMangeString1_16x16[8][16];
 extern const u8 UserMangeString2_16x16[8][16];
+
+extern const u8 ClockSettingTimeString_16x16[8][16];
+extern const u8 ClockSettingDateString_16x16[8][16];
 
 extern const u8 FingerMangeString1_16x16[10][16];
 extern const u8 FingerMangeString2_16x16[10][16];

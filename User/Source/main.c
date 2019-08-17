@@ -133,6 +133,7 @@ void RTC_DispClock(void)
 		else
 		{
 		}
+		GUI_ClearPart(0,2,0,128);
 		
 		GUI_DisplayNumber(0,0,Time.Year,2,2);
 		GUI_DisplayNumber(0,16,Time.Month,2,2);
@@ -142,6 +143,8 @@ void RTC_DispClock(void)
 		GUI_DisplayNumber(0,112,Time.Second,2,2);
 		
 		TimeDisplay = 0;
+		
+		Delay(500);
 	}
 	else
 	{
@@ -198,10 +201,11 @@ static void Task_AdminCkeck(void)
 
 static void Task_FingerIdentify(void)
 {
-	if(MG200_DETECT_Status() == SET)
+	if(MG200_DETECT_Status() == SET && CurrentWindowMode != WindowMode_Setting)
 	{
 		CurrentWindowMode = WindowMode_User;
 		CurrentUserMode = UserSubMode_Finger;
+		UnBusy_Count = 0;
 	}
 	else
 	{
@@ -211,7 +215,15 @@ static void Task_FingerIdentify(void)
 
 static void Task_RFIDIdentify(void)
 {
-	GUI_RFID_CompareCard();
+	if(CurrentWindowMode != WindowMode_Setting)
+	{
+		GUI_RFID_CompareCard();
+	}
+	else
+	{
+		
+	}
+	
 }
 
 //static void Task_DoorMange(void)
