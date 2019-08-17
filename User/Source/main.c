@@ -38,6 +38,10 @@ static void Task_FingerIdentify(void);
 static void Task_RFIDIdentify(void);
 // static void Task_DoorMange(void);
 
+void AT24C04_CheckWrite0(void);
+void AT24C04_CheckWrite1(void);
+void AT24C04_CheckWriteHash(void);
+
 void OLED_DrawX(void);
 /* Private functions ---------------------------------------------------------*/
 
@@ -106,6 +110,10 @@ int main(void)
 	/* 等待系统稳定 */
 	Delay(1000);
 	
+//	AT24C04_CheckWrite0();
+//	AT24C04_CheckWrite1();
+//	AT24C04_CheckWriteHash();
+	
 	while(1)
 	{
 		Task_FingerIdentify();
@@ -114,6 +122,50 @@ int main(void)
 	}
 	
 	/* No Retval */
+}
+
+
+void AT24C04_CheckWrite0(void)
+{
+	printf("AT24C04_CheckWrite0\r\n");
+	u8 ReadTemp;
+	for(u32 i = 0;i <= 255 ;i++)
+	{
+			printf("|%4d W0 %d ",i,AT24C04_WriteByte(i,0x00));
+			printf("R0 %d %#0.2x|",AT24C04_ReadByte(i,&ReadTemp),ReadTemp);
+			printf("\r\n");
+	}
+	
+	return ;
+}
+void AT24C04_CheckWrite1(void)
+{
+	u8 ReadTemp;
+	printf("AT24C04_CheckWrite1\r\n");
+	for(u32 i = 0;i <= 255 ;i++)
+	{
+			printf("|%4d W1 %d ",i,AT24C04_WriteByte(i,0xFF));
+			printf("R1 %d %#0.2x|",AT24C04_ReadByte(i,&ReadTemp),ReadTemp);
+			printf("\r\n");
+
+	}
+	
+	return ;
+}
+
+void AT24C04_CheckWriteHash(void)
+{
+	u8 ReadTemp;
+	printf("AT24C04_CheckWriteHash\r\n");
+	for(u32 i = 0;i <= 255 ;i++)
+	{
+			printf("|%4d WN %d ",i,AT24C04_WriteByte(i,i));
+			printf("RN %d %#0.2x|",AT24C04_ReadByte(i,&ReadTemp),ReadTemp);
+			printf("\r\n");
+		
+	}
+	
+	return ;
 }
 
 void RTC_DispClock(void)
