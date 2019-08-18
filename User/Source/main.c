@@ -2,7 +2,7 @@
 ******************************************************************************
   * @file       main.c
   * @brief      主程序源文件
-  * @version    1.0
+  * @version    1.1
   * @date       Aug-10-2019 Sat
   * @update     添加指纹解锁功能
 ******************************************************************************
@@ -15,19 +15,10 @@
   * @{
   */
 
-/* Global varaiables ---------------------------------------------------------*/
-
-u16 gTouchStatus = 0; // 记录每次由MPR121读取到的按键状态
-
-u8 FingerPack[8] 	= {0};
-u8 FingerPackCount = 0;
-u8 FingerPackOver = 0;
-
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-
 /* Private function prototypes -----------------------------------------------*/
 static void JTAG_Disable(void);
 static void NVIC_Config(void);
@@ -36,9 +27,10 @@ static void RCC_Config(void);
 static void Task_AdminCkeck(void);
 static void Task_FingerIdentify(void);
 static void Task_RFIDIdentify(void);
-// static void Task_DoorMange(void);
+static void Task_DoorMange(void);
 
-void OLED_DrawX(void);
+static u8 Admin_Check(void);
+
 /* Private functions ---------------------------------------------------------*/
 
 /**
@@ -51,27 +43,33 @@ int main(void)
 	/* 屏蔽全局中断 */
 	__set_PRIMASK(1);
 	
+	/* 中断优先级配置 */
 	NVIC_Config();
 	
+	/* 外设时钟使能 */
 	RCC_Config();
 	
+	/* 实时时钟使能 */
 	RTC_Init();
 	
-	/* IIC 和 OLED 使用JTAG引脚需要重映射 */
-	JTAG_Disable();
+	/* 重映射JTAG */
+	JTAG_Disable();// IIC 和 OLED 占用了JTAG引脚
 	
 	/* 初始化LED */
 	LED_Init();
 	
+#ifdef DEBUG	
 	/* 初始化串口2(仅调试用) */
 	USART1_Init(115200);
-	
-#ifdef DEBUG
-		printf("\r\nDebug mode\r\n");
+
+	printf("\r\nDebug mode\r\n");
 #endif		
-	
+
 	/* 初始化声音生成模块 */
 	VoiceModule_Init();
+	
+	/* 初始化SP2 */
+	SPI2_Init();
 	
 	/* 初始化OLED模块并且清屏 */
 	OLED_Init();
@@ -81,10 +79,7 @@ int main(void)
 	/* 初始化电容按键模块，以及初始化MPR121 IRQ引脚为输入浮空态 */
 	Key_Init();
 	MPR_IRQ_Init();
-	
-	/* 管理员判定 */
-	Task_AdminCkeck();
-	
+		
 	/* 指纹模块初始化 */
 	Fingerprint_Init();
 	
@@ -99,9 +94,12 @@ int main(void)
 	
 	/* 定时器3初始化并使能其上溢中断 */
 	TIM3_Interrupt_Init();
-
+		
 	/* 允许全局中断 */
 	__set_PRIMASK(0); 
+	
+	/* 管理员判定 */
+	Task_AdminCkeck();
 	
 	/* 等待系统稳定 */
 	Delay(1000);
@@ -111,11 +109,13 @@ int main(void)
 		Task_FingerIdentify();
 		Task_RFIDIdentify();
 		Task_WindowMain();
+		Task_DoorMange();
 	}
 	
 	/* No Retval */
 }
 
+<<<<<<< HEAD
 void RTC_DispClock(void)
 {
 	static TimeStu ZeroTime = {2019,8,4,8,0,0,0};
@@ -153,10 +153,11 @@ void RTC_DispClock(void)
 	
 }
 
+=======
+>>>>>>> Rebuild_GUI_Logic
 static void JTAG_Disable(void)
 {
 	/* 重映射 */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);// 复位后才可再次重映射
 	
 	return ;
@@ -166,8 +167,8 @@ static void NVIC_Config(void)
 {
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-//	/* Configure one bit for preemption priority */
-//	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+	/* Configure two bit for preemption priority */
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
 	/* Enable the RTC Interrupt */
 	NVIC_InitStructure.NVIC_IRQChannel = RTC_IRQn;
@@ -176,13 +177,64 @@ static void NVIC_Config(void)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 	
+	/* Enable and set EXTI3 Interrupt to the highest priority */
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+	
+	/* Enable the USART2 Interrupt */
+	NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+	
+	/* Enable the TIM3 global Interrupt */
+	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+	
 	return ;
 }
 
-void RCC_Config(void)
+static void RCC_Config(void)
 {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);	 
 	PWR_BackupAccessCmd(ENABLE);
+	
+	/* Enable AFIO clock */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+	
+	/* GPIOA Periph clock enable */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+	/* GPIOB Periph clock enable */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	
+	/* GPIC Periph clock enable */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	
+	/* USART1 Periph clock enable */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+	
+	/* USART2 Periph clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+	
+	/* SPI2 Periph clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+	
+	/* TIM2 clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+	
+	/* TIM3 clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	
+	/* TIM4 clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 	
 	return ;
 }
@@ -226,42 +278,90 @@ static void Task_RFIDIdentify(void)
 	
 }
 
-//static void Task_DoorMange(void)
-//{
-//	/* 门状态控制 */
-//}
+static void Task_DoorMange(void)
+{
+	/* 门状态控制 */
+	static u8 LockFlag = 0x01;
+	
+	if(LockFlag != SmartLock.LockFlag)
+	{
+		LockFlag = SmartLock.LockFlag;
+		
+		if(SmartLock.LockFlag == 0x00)
+		{
+			Motor_OpenLock();
+		}
+		else
+		{
+			Motor_CloseLock();
+		}
+	}
+	else
+	{
+		
+	}
+	
+}
 
-/* Exported functions --------------------------------------------------------*/
-
-u8 Admin_Check(void)
+static u8 Admin_Check(void)
 {
 	u32 i = 0;
 
+	NVIC_DisableIRQ(EXTI3_IRQn);
+
 	Delay(100);
+#ifdef DEBUG
 	printf("MPR_IRQ = %d\r\n",MPR_IRQ());
+#endif	
+	
 	gTouchStatus = MPR_TouchStatus();
+	
+#ifdef DEBUG	
 	printf("TouchStatus = %#x\r\n",gTouchStatus);
+#endif	
 	
 	while(1)
 	{
 		Delay(100);
 		gTouchStatus = MPR_TouchStatus();
+#ifdef DEBUG
 		printf("TouchStatus = %#x\r\n",gTouchStatus);
-		if(i>25 || (gTouchStatus != 0x80f && gTouchStatus != 0x8))
+#endif	
+		if(i>20 || (gTouchStatus != 0x80f && gTouchStatus != 0x8))
 		{
 			break;
 		}
 		i++;
 	}
 	
-	while(MPR_IRQ() == RESET)
+	// 等待MPR121的引脚恢复高电平以防止与中断按键读取的规则冲突
+	do
+	{
+		gTouchStatus = MPR_TouchStatus();
+#ifdef DEBUG
+		printf("TouchStatus = %#x\r\n",gTouchStatus);
+#endif	
+	}while(MPR_IRQ() != SET);
+	
+	if(gTouchStatus != 0x80f)
 	{
 		gTouchStatus = MPR_TouchStatus();
 	}
+	else
+	{
+	}
 	
+	NVIC_EnableIRQ(EXTI3_IRQn);
+
+#ifdef DEBUG	
+	printf("TouchStatus = %#X\r\n",gTouchStatus);
+#endif	
+
+#ifdef DEBUG
 	printf("Out the while,i = %d\r\n",i);
+#endif	
 	
-	if(i < 20)
+	if(i < 15)
 	{
 		return 0;
 	}
@@ -271,6 +371,9 @@ u8 Admin_Check(void)
 	}
 }
 
+/* Exported functions --------------------------------------------------------*/
+
+#ifdef DEBUG
 //Redirect fputc function
 int fputc(int ch,FILE *stream)
 {
@@ -281,6 +384,8 @@ int fputc(int ch,FILE *stream)
 	
 	return ch;
 }
+
+#endif
     
 /**
   * @}

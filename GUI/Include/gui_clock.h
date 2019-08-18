@@ -21,6 +21,13 @@
 #include "gui_baseelmt.h"
 #include "gui_menu.h"	
 #include "ui.h"	 
+<<<<<<< HEAD
+=======
+	 
+#include "global.h"
+
+#include "rtc.h"
+>>>>>>> Rebuild_GUI_Logic
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -35,7 +42,12 @@ typedef enum
 /* Exported functions ------------------------------------------------------- */
 
 void GUI_CLOCK_SettingTime(u32 *LastSubMenu);	 
+<<<<<<< HEAD
 void GUI_CLOCK_SettingDate(u32 *LastSubMenu);	 
+=======
+void GUI_CLOCK_SettingDate(u32 *LastSubMenu);	
+void GUI_DispClock(void);
+>>>>>>> Rebuild_GUI_Logic
 
 #ifdef __cplusplus
 }

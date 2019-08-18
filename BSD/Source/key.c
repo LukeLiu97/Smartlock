@@ -2,7 +2,7 @@
 ******************************************************************************
   * @file       key.c
   * @brief      按键相关函数源文件
-  * @version    1.0
+  * @version    1.1
   * @date       Thu 08-08-2019
 ******************************************************************************
   */
@@ -41,9 +41,6 @@ void EXTI3_Init(void)
 {
 	/*  */
 	EXTI_InitTypeDef   EXTI_InitStructure;
-	
-	/* Enable AFIO clock */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 
 	/* Connect EXTI3 Line to PB.03 pin */
 	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource3);
@@ -54,17 +51,6 @@ void EXTI3_Init(void)
 	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;  
 	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
 	EXTI_Init(&EXTI_InitStructure);
-
-	
-	/*  */
-	NVIC_InitTypeDef   NVIC_InitStructure;
-	
-	/* Enable and set EXTI3 Interrupt to the highest priority */
-	NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
 	
 	return ;
 }

@@ -20,18 +20,25 @@ SmartLockStu SmartLock =
 {
 	"201988",// 管理员密码
 	"201988",// 用户密码
-	0x01,//默认静音
+	0x00,// 默认语音
 	0x00, // 锁状态
-//	{0x02,0x00,0x01,0x09,0x08,0x08,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF}//默认RFID 验证数据
-	{'2','0','1','9','0','8','0','8','2','0','1','9','0','8','0','8',}
+	{'2','0','1','9','0','8','0','8','2','0','1','9','0','8','0','8',}//默认RFID 验证数据
 };
+
+TimeStu UserTime ={2019,8,4,8,0,0,0};
+
+FingerPackStu FingerPack = {0};
+
+u8 StringBuff[BUFF_LENGTH] = {0}; // 输入缓冲区
+
+u16 gTouchStatus = 0; // 记录每次由MPR121读取到的按键状态
 
 u8 CurrentWindowMode = 0;
 u8 CurrentUserMode = 0;
+
 u8 ReversalFlag = 0;
 
 u32 UnBusy_Count = 0;
-
 
 u32 TimeDisplay = 0;
 

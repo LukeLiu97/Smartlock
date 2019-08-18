@@ -2,7 +2,7 @@
 ******************************************************************************
   * @file       finger.c
   * @brief      
-  * @version    1.0
+  * @version    1.1
   * @date       Aug-13-2019 Tue
 ******************************************************************************
   */
@@ -13,9 +13,6 @@
 /** @addtogroup 
   * @{
   */
-
-extern u8 FingerPack[8];
-extern u8 FingerPackOver;
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -31,17 +28,11 @@ void Fingerprint_Init(void)
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
 	
-	/* GPIOB Periph clock enable */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-	
 	/* Configure PB9 in PP mode */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
-	/* GPIC Periph clock enable */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 	
 	/* Configure PC13 in IF mode */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 ;
@@ -75,21 +66,21 @@ u8 Fingerprint_RecvPack(u8 Command,u8 *Result,u8 *Parameter)
 	/* ½ÓÊÜ°ü8Byte */
 	u8 CheckSum = 0;
 	
-	while(FingerPackOver != 1)
+	while(FingerPack.Over != 1)
 	{
 	}
-	FingerPackOver = 0;
+	FingerPack.Over = 0;
 	
 	for(u8 i = 1; i < 7;i++)
 	{
-		CheckSum += FingerPack[i];
+		CheckSum += FingerPack.Data[i];
 	}
-	if(FingerPack[7] != CheckSum)
+	if(FingerPack.Data[7] != CheckSum)
 	{
 		return 1;
 	}
 	
-	if(FingerPack[0] != FingerPack_Start)
+	if(FingerPack.Data[0] != FingerPack_Start)
 	{
 		return 1;
 	}
@@ -97,7 +88,7 @@ u8 Fingerprint_RecvPack(u8 Command,u8 *Result,u8 *Parameter)
 	{	
 	}
 	
-	if(FingerPack[1] != FingerPack_SlaveAddr)
+	if(FingerPack.Data[1] != FingerPack_SlaveAddr)
 	{
 		return 1;
 	}
@@ -105,7 +96,7 @@ u8 Fingerprint_RecvPack(u8 Command,u8 *Result,u8 *Parameter)
 	{
 	}
 	
-	if(FingerPack[2] != FingerPack_MasterAddr)
+	if(FingerPack.Data[2] != FingerPack_MasterAddr)
 	{
 		return 1;
 	}
@@ -113,7 +104,7 @@ u8 Fingerprint_RecvPack(u8 Command,u8 *Result,u8 *Parameter)
 	{
 	}
 	
-	if(FingerPack[3] != Command)
+	if(FingerPack.Data[3] != Command)
 	{
 		return 1;
 	}
@@ -121,8 +112,8 @@ u8 Fingerprint_RecvPack(u8 Command,u8 *Result,u8 *Parameter)
 	{
 	}
 	
-	*Result = FingerPack[4];
-	*Parameter = FingerPack[5];
+	*Result = FingerPack.Data[4];
+	*Parameter = FingerPack.Data[5];
 	
 	return 0;
 }

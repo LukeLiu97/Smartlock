@@ -62,8 +62,6 @@ typedef enum
 	UserSubMode_RFID		= 2,
 }UserSubMode_TypeDef;
 
-#define BUFF_LENGTH 256  // 定义输入缓冲区长度
-
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
