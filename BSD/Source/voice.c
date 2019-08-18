@@ -2,7 +2,7 @@
 ******************************************************************************
   * @file       voice.c
   * @brief      声音模块相关操作源文件
-  * @version    1.0
+  * @version    1.1
   * @date       Wed 07-08-2019
 ******************************************************************************
   */
@@ -27,9 +27,8 @@
 void VoiceModule_Init(void)
 {
 	/* GPIO 初始化 VOICE_DATA PB0 VOICE_BUSY PB1 */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-	
 	GPIO_InitTypeDef GPIO_InitStruct;
+	
 	GPIO_StructInit(&GPIO_InitStruct);
 	
 	/* BUSY PB1 */

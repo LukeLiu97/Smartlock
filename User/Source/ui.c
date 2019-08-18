@@ -2,7 +2,7 @@
 ******************************************************************************
   * @file       ui.c
   * @brief      User Interface
-  * @version    1.0
+  * @version    2.0
   * @date       Aug-12-2019 Mon
 ******************************************************************************
   */
@@ -10,35 +10,21 @@
 /* Includes ------------------------------------------------------------------*/
 #include "ui.h"
 
-
 /** @addtogroup User Interface
   * @{
   */
-
-/* Extern variables ----------------------------------------------------------*/
-extern u8 ReversalFlag;	 // 显示翻转标志
-
+ 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-
-u8 Password[7] = "201988"; // 初始密码
-//u8 StringBuff[BUFF_LENGTH] = {0}; // 输入缓冲区
-
 /* Private function prototypes -----------------------------------------------*/
 
-u8 Password_Input(void);
-
-extern u8 Admin_Check(void);
+static u8 Password_Input(void);
 
 static void Admin_Mode(void);
 
-//extern void ArrayForward(u8 *Array,u8 Length);
-//extern void ArrayBackward(u8 *Array,u8 Length);
-
 /* Private functions ---------------------------------------------------------*/
-
 
 void OLED_ShowWaitRow(u8 RowNumber,u8 RowHeight)
 {
@@ -47,7 +33,6 @@ void OLED_ShowWaitRow(u8 RowNumber,u8 RowHeight)
 	{
 		OLED_Show_XxN8_Character(RowNumber,i * 16 + 24,RowHeight,16,&(String4_16xN[2*i][0]));
 	}
-	
 	return ;
 }
 
@@ -99,115 +84,98 @@ u8 Password_Input(void)
 	
 	GUI_Show8StrTextBox(4,2,StringBuff);
 	GUI_Show8StrTextBox(6,2,StringBuff + 8);
-//	StringBuff[i] = 0;
 	
 	return 1;
 }
 
-
 void Admin_Mode(void)
 {	
-	GUI_DisplayString(0,32,&String3_16xN[0][0],4);// 居中显示“设置菜单”
-	GUI_DisplayString(2,24,&String2_16xN[0][0],5);// “请输入密码”
-	
 	Voice_Play(VoiceCmd_INPUT_ADMIN_PASSWORD);
 	
-	Password_Input();
+	GUI_DisplayString(2,8+0,&EnterString_16x16[0][0],2);// “输入”
+	GUI_DisplayString(2,8+32,&AdminString_16x16[0][0],3);// “管理员”
+	GUI_DisplayString(2,8+80,&PasswordString_16x16[0][0],2);// “密码”
 	
-	if(CurrentWindowMode == WindowMode_AllClear)
+	if(GUI_Password_Check(SmartLock.AdminPassword,6) == 0)
 	{
-	return ;
+		CurrentWindowMode = WindowMode_Setting;
 	}
 	else
 	{
+		CurrentWindowMode = WindowMode_User;
 	}
 	
-	if(FakePassword_Check(StringBuff,SmartLock.UserPassword) == 1)
-	{
-		printf("Password right\r\n");
-		Voice_Play(VoiceCmd_SETTING_SUCCESS);
-	}
-	else
-	{
-		printf("Password wrong\r\n");
-		Voice_Play(VoiceCmd_PASSWORD_INCONFORMITY);
-	}
+	GUI_ClearScreen();
 		
 	return ;
 }
 
 void User_PasswordMode(void)
 {
-//	static u8 FirstFlag = 0;
 	static u8 ErrorCount = 0;
-	// TODO 密码输入界面
 	
-//	if( FirstFlag == 0)
-//	{
-//		
-//		if(FirstFlag == 0)
-//		{
-//			FirstFlag = 1;
-//		}
-//		else
-//		{
-//		}
-		
+	if(TimeDisplay == 0)
+	{
 		GUI_ShowOperationTipRow(0,2);// 显示"按#确认 按*删除"
-		GUI_DisplayString(2,24,&String2_16xN[0][0],5);// “请输入密码”
+	}
+	else
+	{
+		GUI_DispClock();
+	}
+	
+	GUI_DisplayString(2,24,&String2_16xN[0][0],5);// “请输入密码
+	
+	if(CurrentWindowMode == WindowMode_AllClear)
+	{
+		return ;
+	}
+	else
+	{
+	}
+	
 
-
-
-		if(CurrentWindowMode == WindowMode_AllClear)
+	if(Password_Input() == 0) // 内部调用了OLED_ShowTextBox()用以实时显示输入状况
+	{
+		if(FakePassword_Check(StringBuff,SmartLock.UserPassword) == 1)
 		{
-			return ;
+#ifdef DEBUG
+			printf("Password right\r\n");
+#endif			
+
+			Voice_Play(VoiceCmd_DOOROPEN_SUCCESS);
+			SmartLock_OpenDoor();
+			ErrorCount = 0;
 		}
 		else
 		{
-		}
-
-//		#ifdef DEBUG
-//		printf("StringBuff = \"%s\"\r\n",StringBuff);
-//		#endif		
-
-		// TODO 依据按键输入情况处理缓冲区 + 刷新密码输入区
-
-		if(Password_Input() == 0) // 内部调用了OLED_ShowTextBox()用以实时显示输入状况
-		{
-			if(FakePassword_Check(StringBuff,SmartLock.UserPassword) == 1)
-			{
-				printf("Password right\r\n");
-				Voice_Play(VoiceCmd_DOOROPEN_SUCCESS);
-				Motor_OpenLock();
-				ErrorCount = 0;
-			}
-			else
-			{
-				printf("Password wrong\r\n");
-				Voice_Play(VoiceCmd_PASSWORD_INCONFORMITY);
-				Motor_CloseLock();
-				ErrorCount++;
-			}
-			memset(StringBuff,0,sizeof(StringBuff));// 清空输入缓存
-		}
-		else
-		{
+#ifdef DEBUG
+			printf("Password wrong\r\n");
+#endif	
 			
+			Voice_Play(VoiceCmd_PASSWORD_INCONFORMITY);
+			SmartLock_CloseDoor();
+			ErrorCount++;
 		}
+		memset(StringBuff,0,sizeof(StringBuff));// 清空输入缓存
+	}
+	else
+	{
 		
-		if(ErrorCount > 2)
+	}
+	
+	if(ErrorCount > 2)
+	{
+		for(u32 i = 0 ;i<10;i++)
 		{
-			for(u32 i = 0 ;i<10;i++)
-			{
-				OLED_ShowWaitRow(2,2);
-				OLED_Show_XxN8_Character(2,80,2,8,&(Number_8x16[9-i][0]));
-				TIM2_Delay_ms(1000);
-			}
-			ErrorCount = 1;
+			OLED_ShowWaitRow(2,2);
+			OLED_Show_XxN8_Character(2,80,2,8,&(Number_8x16[9-i][0]));
+			TIM2_Delay_ms(1000);
 		}
-		else
-		{
-		}
+		ErrorCount = 1;
+	}
+	else
+	{
+	}
 	
 	
 	return ;
@@ -303,7 +271,13 @@ void Mute_Setting(u8 MenuElmt)
 
 void Menu_PasswordChange(u32 *LastMenu)
 {
-	if(GUI_Password_Check(SmartLock.AdminPassword,6) == 0)
+	
+	GUI_DisplayString(0,16,&MenuString1_16x16[0][0],6);// 居中显示“修改用户密码”
+	GUI_DisplayString(2,16+0,&EnterString_16x16[0][0],2);// “输入”
+	GUI_DisplayString(2,16+32,&OldString_16x16[0][0],2);// “新的”
+	GUI_DisplayString(2,16+64,&PasswordString_16x16[0][0],2);// “密码”
+	
+	if(GUI_Password_Check(SmartLock.UserPassword,6) == 0)
 	{
 		GUI_Password_Enroll(SmartLock.UserPassword,6);
 	}
@@ -509,6 +483,7 @@ void IDCard_Mange(u8 MenuElmt)
 	{
 		// TODO 删除用户任务
 	}
+	
 }
 
 void Menu_IDCardMange(u32 *LastMenu)
@@ -526,14 +501,11 @@ void Menu_IDCardMange(u32 *LastMenu)
 	{
 		case MenuPlace_Check:
 			IDCard_Mange(CurrentPlace[0]);// 执行菜单位置记录数组对应选项任务
-			GUI_ClearScreen();
 			break;
 		case MenuPlace_Back:
 			*LastMenu = SubMenu_Start;
-			GUI_ClearScreen();
 			break;
 		case MenuPlace_Shift:
-			GUI_ClearScreen();
 			break;
 		default:
 			break;
@@ -559,11 +531,12 @@ void Menu_IDCardMange(u32 *LastMenu)
 
 void Window_AdminMode(void)
 {
+
 	Admin_Mode();
 	memset(StringBuff,0,sizeof(StringBuff));// 清空输入缓存区
-	GUI_ClearScreen();
+//	GUI_ClearScreen();
 	
-	CurrentWindowMode = WindowMode_Setting;
+//	CurrentWindowMode = WindowMode_Setting;
 	
 	return ;
 }

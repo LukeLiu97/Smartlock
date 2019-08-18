@@ -34,6 +34,13 @@ void GUI_ReversalDisable(void)
 	return ;
 }
 
+void GUI_DisplayChar(u8 RowNumber,u8 Column,u8 RowHeight,u8 Width,const u8 *FontArray)
+{
+	OLED_Show_XxN8_Character(RowNumber,Column,RowHeight,Width,FontArray);
+	
+	return ;
+}
+
 void GUI_DisplayString(u8 RowNumber,u8 Column,const u8 *StringFont,u8 StringLength)
 {
 	OLED_ShowString(RowNumber,2,Column,StringFont,StringLength);

@@ -21,6 +21,8 @@
 	 
 #include "uart.h"
 	 
+#include "global.h"
+	 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 typedef enum
