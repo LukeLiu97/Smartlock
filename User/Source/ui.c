@@ -117,23 +117,6 @@ void User_PasswordMode(void)
 	if(TimeDisplay == 0)
 	{
 		GUI_ShowOperationTipRow(0,2);// 显示"按#确认 按*删除"
-		GUI_DisplayString(2,24,&String2_16xN[0][0],5);// “请输入密码”
-
-		// TODO 依据按键输入情况处理缓冲区 + 刷新密码输入区
-
-		Password_Input(); // 内部调用了OLED_ShowTextBox()用以实时显示输入状况
-
-		if(CurrentWindowMode == WindowMode_AllClear)
-		{
-			return ;
-		}
-		else
-		{
-		}
-
-		#ifdef DEBUG
-		printf("StringBuff = \"%s\"\r\n",StringBuff);
-		#endif		
 	}
 	else
 	{
@@ -150,7 +133,6 @@ void User_PasswordMode(void)
 	{
 	}
 	
-
 
 	if(Password_Input() == 0) // 内部调用了OLED_ShowTextBox()用以实时显示输入状况
 	{
@@ -174,7 +156,6 @@ void User_PasswordMode(void)
 			SmartLock_CloseDoor();
 			ErrorCount++;
 		}
-
 		
 		memset(StringBuff,0,sizeof(StringBuff));// 清空输入缓存区
 		
@@ -190,24 +171,6 @@ void User_PasswordMode(void)
 		}
 		else
 		memset(StringBuff,0,sizeof(StringBuff));// 清空输入缓存
-	}
-	else
-	{
-		
-	}
-	
-	if(ErrorCount > 2)
-	{
-		for(u32 i = 0 ;i<10;i++)
-		{
-			OLED_ShowWaitRow(2,2);
-			OLED_Show_XxN8_Character(2,80,2,8,&(Number_8x16[9-i][0]));
-			TIM2_Delay_ms(1000);
-		}
-		ErrorCount = 1;
-
-		memset(StringBuff,0,sizeof(StringBuff));// 清空输入缓存
-
 	}
 	else
 	{
@@ -247,11 +210,13 @@ void SubMenu_Change(u32 *NextSubMenu,u8 MenuCurrentPlace)
 void Menu_Start(u32 *LastMenu)
 {
 	// 字符串顺序关联用户设置菜单顺序，这里使用的是设置菜单子菜单枚举结构体的顺序
+	const u8 *Str[6] = 
+	{
 		&(MenuString1_16x16[0][0]),// “修改用户密码”
+		&(MenuString2_16x16[0][0]),// “声音模式”
 		&(MenuString3_16x16[0][0]),// “登记指纹”
 		&(MenuString4_16x16[0][0]),// “登记卡片”
 		&(MenuString5_16x16[0][0]),// “时钟设置”
-
 		&(MenuString6_16x16[0][0]),// “存储管理”
 	};
 	const u8 StrLenArray[6] = {6,4,4,4,4,4};
@@ -424,7 +389,11 @@ void Menu_ClockSetting(u32 *LastMenu)
 	{
 		case MenuPlace_Check:
 			Clock_Setting(CurrentPlace[0]);
+			GUI_ClearScreen();
+			break;
+		case MenuPlace_Back:
 			*LastMenu = SubMenu_Start;
+			GUI_ClearScreen();
 			break;
 		case MenuPlace_Shift:
 			GUI_ClearScreen();
@@ -446,6 +415,7 @@ void Menu_ClockSetting(u32 *LastMenu)
 	}
 	else
 	{
+	}
 	
 	return ;
 }
@@ -603,8 +573,10 @@ void Menu_MemorySetting(u32 *LastMenu)
 			break;
 		case MenuPlace_Back:
 			*LastMenu = SubMenu_Start;
+			GUI_ClearScreen();
 			break;
 		case MenuPlace_Shift:
+			GUI_ClearScreen();
 			break;
 		default:
 			break;
@@ -633,7 +605,6 @@ void Window_AdminMode(void)
 
 	Admin_Mode();
 	memset(StringBuff,0,sizeof(StringBuff));// 清空输入缓存区
-D
 
 //	GUI_ClearScreen();
 	

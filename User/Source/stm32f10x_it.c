@@ -287,8 +287,6 @@ void RTC_IRQHandler(void)
 	RTC_ClearITPendingBit(RTC_IT_SEC);
 
 	/* Interrupt Task */
-		
-{
 	if(Count >= 3)
 	{
 		Count = 0;
