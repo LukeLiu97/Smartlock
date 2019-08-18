@@ -53,6 +53,7 @@ typedef enum
 	SubMenu_FingerMange		= 3,
 	SubMenu_IDCardMange		= 4,
 	SubMenu_ClockSetting	= 5,
+	SubMenu_MemorySetting	= 6,
 }SubMenu_TypeDef;
 
 typedef enum

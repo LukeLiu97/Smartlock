@@ -21,8 +21,6 @@
 #include "time.h"
 	 
 #include "finger.h"
-#include "voice.h"
-#include "motor.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

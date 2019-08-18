@@ -22,7 +22,6 @@
 
 #include "gui_baseelmt.h"
 #include "rfid.h"
-#include "voice.h"
 #include "time.h"
 #include "motor.h"
 	 

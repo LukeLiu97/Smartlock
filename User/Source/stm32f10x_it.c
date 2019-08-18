@@ -288,15 +288,7 @@ void RTC_IRQHandler(void)
 
 	/* Interrupt Task */
 		
-<<<<<<< HEAD
-	if(Count >= 5)
-	{
-		TimeDisplay = 1;
-		Count = 0;
-	}
-	else
-	{
-=======
+{
 	if(Count >= 3)
 	{
 		Count = 0;
@@ -309,7 +301,6 @@ void RTC_IRQHandler(void)
 	else
 	{
 		TimeDisplay = 0;
->>>>>>> Rebuild_GUI_Logic
 		Count++;
 	}
 

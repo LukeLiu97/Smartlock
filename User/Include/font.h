@@ -34,6 +34,7 @@ extern const u8 MenuString2_16x16[8][16];
 extern const u8 MenuString3_16x16[8][16];
 extern const u8 MenuString4_16x16[8][16];
 extern const u8 MenuString5_16x16[8][16];
+extern const u8 MenuString6_16x16[8][16];
 	 
 extern const u8 Number_4x8[10][4];
 extern const u8 Number_8x16[10][16];
@@ -64,6 +65,7 @@ extern const u8 OldString_16x16[4][16];
 extern const u8 AdminString_16x16[6][16];
 extern const u8 IdentifyString_16x16[4][16];
 extern const u8 LayUpString_16x16[4][16];
+extern const u8 EnableString_16x16[4][16];
 
 extern const u8 Logo_72x64[8][72];
 extern const u8 Fingerprint_64px[8][64];
