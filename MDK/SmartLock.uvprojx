@@ -525,6 +525,11 @@
               <FileType>1</FileType>
               <FilePath>..\BSD\Source\rtc.c</FilePath>
             </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\spi.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1014,7 +1019,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_MD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CMSIS;..\Std_Library\inc;..\BSD\Include;..\User\Include;..\GUI\Include</IncludePath>
+              <IncludePath>..\CMSIS;..\StdLibrary\inc;..\BSD\Include;..\User\Include;..\GUI\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1202,6 +1207,11 @@
               <FileName>rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\BSD\Source\rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSD\Source\spi.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -39,6 +39,13 @@ typedef struct TimeStu_
 	u8 Second;
 }TimeStu;
 
+typedef struct FingerPackStu_
+{
+	u8 Data[8];
+	u8 Count;
+	u8 Over;
+}FingerPackStu;
+
 /* Extern variables ----------------------------------------------------------*/
 extern u8 ReversalFlag;	 
 
@@ -48,12 +55,23 @@ extern u8 CurrentUserMode;
 
 extern SmartLockStu SmartLock;
 
+extern FingerPackStu FingerPack;
+
+extern TimeStu UserTime;
+
 extern u32 UnBusy_Count;
 
 extern u32 TimeDisplay;
 
+#define BUFF_LENGTH 256  // 定义输入缓冲区长度
+extern u8 StringBuff[BUFF_LENGTH];
+extern u16 gTouchStatus;
+
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
+#define SmartLock_OpenDoor() (SmartLock.LockFlag = 0x00)
+#define SmartLock_CloseDoor() (SmartLock.LockFlag = 0x01)
+
 /* Exported functions ------------------------------------------------------- */
 
 #ifdef __cplusplus

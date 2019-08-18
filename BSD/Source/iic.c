@@ -2,7 +2,7 @@
 ******************************************************************************
   * @file       i2c.c
   * @brief      
-  * @version    1.0
+  * @version    1.1
   * @date       Wed 07-08-2019
 ******************************************************************************
   */
@@ -30,9 +30,6 @@ void IIC_Software_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	/* GPIOB Periph clock enable */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-	
 	// 引脚冲突 需要重映射
 	
 	/* Configure PB4 and PB5 in output pushpull mode */

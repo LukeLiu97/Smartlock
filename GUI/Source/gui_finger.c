@@ -40,13 +40,17 @@ void GUI_Finger_EnrollNewUser(void)
 	{
 		GUI_DisplayString(4,32+0,&EnrollString_16x16[0][0],2);
 		GUI_DisplayString(4,32+32,&SuccessString_16x16[0][0],2);
+#ifdef DEBUG
 		printf("Add new user success\r\n");
+#endif
 	}
 	else
 	{
 		GUI_DisplayString(4,32+0,&EnrollString_16x16[0][0],2);
 		GUI_DisplayString(4,32+32,&FailString_16x16[0][0],2);
+#ifdef DEBUG
 		printf("Could new a user\r\n");
+#endif
 	}
 	
 	Delay(1000);
@@ -97,7 +101,7 @@ void GUI_Finger_Compare(void)
 	{
 		Voice_Play(VoiceCmd_DOOROPEN_SUCCESS);
 		
-		Motor_OpenLock();
+		SmartLock_OpenDoor();
 		
 		GUI_ClearScreen();
 		GUI_DisplayPicture(32,0,64,64,&Fingerprint_64px[0][0]);
@@ -112,6 +116,7 @@ void GUI_Finger_Compare(void)
 		GUI_DisplayString(2,48,&IdentifyString_16x16[0][0],2);
 		GUI_DisplayString(4,48,&FailString_16x16[0][0],2);
 		
+		SmartLock_CloseDoor();
 		Delay(1000);
 	}
 	

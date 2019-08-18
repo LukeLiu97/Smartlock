@@ -44,7 +44,9 @@ u8 RFID_CardSelect(u8 (*SerialNum)[4])
 			/* —°ø® */
 			if(PcdSelect(*SerialNum) == MI_OK)
 			{	
+#ifdef DEBUG
 				printf("Select Card Success \r\n");
+#endif
 				Voice_Play(VoiceCmd_Di);
 			}
 			else
@@ -89,7 +91,9 @@ u8 GUI_RFID_WriteCard(u8 DataBlockAddr, u8 ControlBlockAddr,u8 WriteData[16])
 	{
 		if(PcdWrite(DataBlockAddr,WriteData) == MI_OK)
 		{
+#ifdef DEBUG
 			printf("Write Card OK \r\n");
+#endif
 			Voice_Play(VoiceCmd_SETTING_SUCCESS);
 		}
 		else
@@ -112,8 +116,8 @@ void GUI_RFID_AuthorizeNewCard(void)
 	GUI_DisplayString(0,32,&MenuString4_16x16[0][0],4);// æ”÷–œ‘ æ°∞µ«º«ø®∆¨°±
 
 	GUI_DisplayString(4,24+0,&Char_16x16[0][0],1);// °∞«Î°±
-	GUI_DisplayString(4,24+32,&LayUpString_16x16[0][0],2);// °∞∑≈÷√°±
-	GUI_DisplayString(4,24,&MenuString4_16x16[4][0],2);// °∞ø®∆¨°±
+	GUI_DisplayString(4,24+16,&LayUpString_16x16[0][0],2);// °∞∑≈÷√°±
+	GUI_DisplayString(4,24+48,&MenuString4_16x16[4][0],2);// °∞ø®∆¨°±
 	
 	Voice_Play(VoiceCmd_PUTCARD);
 	
@@ -149,7 +153,7 @@ u8 GUI_RFID_ReadCard(u8 DataBlockAddr, u8 ControlBlockAddr,u8 (*ReadData)[16])
 		{
 			if(PcdRead(DataBlockAddr,*ReadData) == MI_OK)
 			{
-//				Voice_Play(VoiceCmd_SETTING_SUCCESS);
+
 			}
 			else
 			{
@@ -162,7 +166,7 @@ u8 GUI_RFID_ReadCard(u8 DataBlockAddr, u8 ControlBlockAddr,u8 (*ReadData)[16])
 		}
 		
 	}
-		else
+	else
 	{
 		return 1;
 	}
@@ -181,18 +185,20 @@ void GUI_RFID_CompareCard(void)
 	{
 		Voice_Play(VoiceCmd_Di);
 		
-		GUI_ReversalEnable();
+		GUI_ClearScreen();
+		
 		GUI_DisplayPicture(32,0,64,64,&RFIDCard_64px[0][0]);
 		GUI_ReversalDisable();
 		
 		if(HashCompare(ReadDataTemp,SmartLock.IDCardHash,sizeof(SmartLock.IDCardHash)) == 0)
 		{
 			Voice_Play(VoiceCmd_DOOROPEN_SUCCESS);
-			
+			Delay(300);
 			GUI_ClearScreen();
-			GUI_DisplayPicture(32,0,64,64,&RFIDCard_64px[0][0]);
+			GUI_DisplayString(2,48,&IdentifyString_16x16[0][0],2);
+			GUI_DisplayString(4,48,&SuccessString_16x16[0][0],2);
 			
-			Motor_OpenLock();
+			SmartLock_OpenDoor();
 		}
 		else
 		{
@@ -203,7 +209,7 @@ void GUI_RFID_CompareCard(void)
 			GUI_DisplayString(2,48,&IdentifyString_16x16[0][0],2);
 			GUI_DisplayString(4,48,&FailString_16x16[0][0],2);
 			
-			Motor_CloseLock();
+			SmartLock_CloseDoor();
 		}
 		
 		Delay(1000);

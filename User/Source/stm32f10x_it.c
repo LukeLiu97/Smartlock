@@ -29,18 +29,13 @@
   */
 
 /* Extern variables ----------------------------------------------------------*/
-extern u16 gTouchStatus;
-extern u8 CurrentWindowMode;
-extern u32 UnBusy_Count;
-
-extern u8 FingerPack[8];
-extern u8 FingerPackCount;
-extern u8 FingerPackOver;
-
+//extern u16 gTouchStatus;
+//extern u8 CurrentWindowMode;
+//extern u32 UnBusy_Count;
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-//#define SHOW_TOUCHSTATUS
+#define SHOW_TOUCHSTATUS
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -179,7 +174,9 @@ void EXTI3_IRQHandler(void)
 		
 		gTouchStatus = MPR_TouchStatus();
 
-		printf("gTouchStatus = %d \r\n",gTouchStatus);
+#ifdef DEBUG
+		printf("gTouchStatus = %#X \r\n",gTouchStatus);
+#endif
 		
 		if(gTouchStatus == 0)
 		{
@@ -196,7 +193,9 @@ void EXTI3_IRQHandler(void)
 		}
 		
 		MPR_TouchStatus();
-
+#ifdef DEBUG		
+		printf("gTouchStatus = %#X\r\n",gTouchStatus);
+#endif
 		/* Clear the  EXTI line 3 pending bit */
 		EXTI_ClearITPendingBit(EXTI_Line3);
 		
@@ -219,16 +218,22 @@ void TIM3_IRQHandler(void)
 		if(UnBusy_Count > 12 && CurrentWindowMode != WindowMode_Setting)
 		{
 			CurrentWindowMode = WindowMode_AllClear;
-			
+						
 			if(UnBusy_Count > 30)
 			{
+#ifdef DEBUG
 				printf("Free status\r\n");
+#endif
 				UnBusy_Count = 20;
 			}
+#ifdef DEBUG
 			else if(UnBusy_Count > 15)
 			{
+
 				printf("Free status\r\n");
+
 			}
+#endif
 			else
 			{
 			}
@@ -246,18 +251,18 @@ void USART2_IRQHandler(void)
 {
 	if(USART_GetFlagStatus(USART2,USART_FLAG_RXNE) == SET)
 	{
-		FingerPack[FingerPackCount++] = USART_ReceiveData(USART2);
+		FingerPack.Data[FingerPack.Count++] = USART_ReceiveData(USART2);
 		
-		if(FingerPack[0] != 0x6C)// 接受起始码不吻合
+		if(FingerPack.Data[0] != 0x6C)// 接受起始码不吻合
 		{
-			FingerPackCount = 0;
+			FingerPack.Count = 0;
 		}
 		else
 		{
-			 if(FingerPackCount == 8)
+			 if(FingerPack.Count == 8)
 			 {
-				 FingerPackCount = 0;
-				 FingerPackOver = 1;
+				 FingerPack.Count = 0;
+				 FingerPack.Over = 1;
 			 }
 		}
 	}
@@ -283,13 +288,18 @@ void RTC_IRQHandler(void)
 
 	/* Interrupt Task */
 		
-	if(Count >= 5)
+	if(Count >= 3)
+	{
+		Count = 0;
+	}
+	else if(Count >= 2)
 	{
 		TimeDisplay = 1;
-		Count = 0;
+		Count++;
 	}
 	else
 	{
+		TimeDisplay = 0;
 		Count++;
 	}
 

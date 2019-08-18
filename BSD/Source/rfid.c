@@ -90,15 +90,9 @@ u8 spi_read_write(u8 SendData)
 **************************************/
 void RFID_Init(void)
 {
-	/* SPI2 Config*/
-	
 	// 由于RC522在较高速率通信不稳定，所以SPI时钟应稍慢一些
 	
-	/*
-		GPIO 配置
-		RFID_CS PA6  RFID_RST PA7
-	*/
-	
+	/* GPIO ConfigureRFID_CS PA6  RFID_RST PA7 */
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* GPIOA Periph clock enable */
