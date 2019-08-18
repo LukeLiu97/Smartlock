@@ -2,7 +2,7 @@
 ******************************************************************************
   * @file       tim.c
   * @brief      通用定时器驱动源文件
-  * @version    1.0
+  * @version    1.1
   * @date       Aug-12-2019 Mon
 ******************************************************************************
   */
@@ -28,9 +28,6 @@ void TIM2_Delay_ms(u16 ms)
 	uint16_t PrescalerValue = 0;
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-	
-	/* TIM2 clock enable */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 	
 	/* Compute the prescaler value */
 	PrescalerValue = (uint16_t) (SystemCoreClock / 10000) - 1;
@@ -66,9 +63,6 @@ void TIM3_Interrupt_Init(void)
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	
-	/* TIM3 clock enable */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-	
 	/* Compute the prescaler value */
 	PrescalerValue = (uint16_t) (SystemCoreClock / 10000) - 1;
 	
@@ -86,16 +80,6 @@ void TIM3_Interrupt_Init(void)
 //	TIM_ARRPreloadConfig(TIM2,ENABLE);
 	
 	TIM_ClearFlag(TIM3,TIM_FLAG_Update);
-
-	NVIC_InitTypeDef NVIC_InitStructure;
-
-	/* Enable the TIM3 global Interrupt */
-	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-
-	NVIC_Init(&NVIC_InitStructure);
 	
 	/* TIM IT enable */
     TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
@@ -109,10 +93,7 @@ void TIM4_Delay_us(u16 us)
 	uint16_t PrescalerValue = 0;
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-	
-	/* TIM4 clock enable */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
-	
+
 	/* Compute the prescaler value */
 	PrescalerValue = (uint16_t) (SystemCoreClock / 1000000) - 1;
 	

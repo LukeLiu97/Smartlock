@@ -2,7 +2,7 @@
 ******************************************************************************
   * @file       oled.c
   * @brief      
-  * @version    1.0
+  * @version    1.1
   * @date       Aug-09-2019 Fri
 ******************************************************************************
   */
@@ -32,15 +32,12 @@
 
 void OLED_Init(void)
 {
-	/*
-		GPIO 配置
-		OLED_CS PA15 (需要重映射) OLED_DC PA11 OLED_RES PA12  
-	*/
+	/* SPI2 Init */
+	// 缺省
+	
+	/* OLED_CS PA15 (需要重映射) OLED_DC PA11 OLED_RES PA12 */
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
-
-	/* GPIOA Periph clock enable */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
 	/* Configure PA11 and PA12 , PA15 in output pushpull mode */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_15;
@@ -48,49 +45,6 @@ void OLED_Init(void)
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	
-	/* 
-		GPIO 复用为 SPI2
-		SPI_MOSI PB15 SPI_MISO PB14 SPI_SCLK PB13 
-	*/
-	
-	/* GPIOB Periph clock enable */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-	
-	/* Configure PB13 and PB14 , PB15 in   mode */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_15;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
-	
-	/* Configure PB14 in   mode */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14 ;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
-	/* SPI2 mode Setting */
-	SPI_InitTypeDef  SPI_InitStructure;
-	
-	 /* SPI2 Periph clock enable */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
-	
-	/* SPI2 configuration ------------------------------------------------------*/
-	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
-	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
-	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
-	SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
-	SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
-	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;
-	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
-	SPI_InitStructure.SPI_CRCPolynomial = 7;
-	SPI_Init(SPI2, &SPI_InitStructure);
-	
-	/* SPI2 enable -------------------------------------------------------------*/
-	SPI_Cmd(SPI2,ENABLE);
-	
 	/* GPIO准备 */
 	OLED_CS_H();
 	OLED_RES_H();

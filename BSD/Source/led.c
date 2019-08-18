@@ -2,7 +2,7 @@
 ******************************************************************************
   * @file       led.c
   * @brief      LED相关函数源文件
-  * @version    1.0
+  * @version    1.1
   * @date       Tue 06-08-2019
 ******************************************************************************
   */
@@ -30,10 +30,7 @@
 void LED_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
-
-	/* GPIOB Periph clock enable */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-
+	
 	/* Configure PB6 and PB8 in output pushpull mode */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_8;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;

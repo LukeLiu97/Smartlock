@@ -2,7 +2,7 @@
 ******************************************************************************
   * @file       user_mic.c
   * @brief      用户自定的函数
-  * @version    1.0
+  * @version    1.1
   * @date       Aug-14-2019 Wed
 ******************************************************************************
   */
@@ -108,7 +108,7 @@ u8 HashCompare(const u8 *Key1,const u8 *Key2,u8 Length)
 u8 FakePassword_Check(u8 *TagetStr,u8 *MatchStr)
 {	
 	s32 Place;
-	//Place = String_ViolentMatch(StringBuff,SmartLock.UserPassword);
+	
 	Place = String_ViolentMatch(TagetStr,MatchStr);
 	
 #ifdef DEBUG

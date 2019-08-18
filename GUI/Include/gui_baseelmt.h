@@ -39,6 +39,7 @@ void GUI_ReversalEnable(void);
 void GUI_ReversalDisable(void);
 
 void GUI_DisplayPassBox(u8 RowNumber,u8 *Str);
+void GUI_DisplayChar(u8 RowNumber,u8 Column,u8 RowHeight,u8 Width,const u8 *FontArray);
 void GUI_Show8StrTextBox(u8 RowNumber,u8 RowHeight,u8 *Str);
 void GUI_DisplayString(u8 RowNumber,u8 Column,const u8 *StringFont,u8 StringLength);
 void GUI_ShowOperationTipRow(u8 RowNumber,u8 RowHeight);// 显示文字 按#确认 按*取消

@@ -29,15 +29,7 @@ u8 NumStr_Input(u8 *Buff,u8 StrLength)
 	
 	for(i = 0; i < StrLength ; )
 	{
-//		LED3_OFF();
-		
-//		if(CurrentWindowMode == WindowMode_AllClear)
-//		{
-//			return ;
-//		}
-//		else
-//		{
-//		}
+		LED3_OFF();
 		
 		KeyValue = Key_Scan();
 			
@@ -118,6 +110,7 @@ u8 GUI_Password_Enroll(u8 *PasswordBuff,u8 PasswordLength)
 	GUI_DisplayString(2,16+64,&PasswordString_16x16[0][0],2);// “密码”
 	
 	Voice_Play(VoiceCmd_INPUT_NEW_PASSWORD_AGAIN);
+	
 	if(NumStr_Input(PasswordTemp[1],6) != 6)
 	{
 		Voice_Play(VoiceCmd_REPETE);
@@ -150,14 +143,6 @@ u8 GUI_Password_Enroll(u8 *PasswordBuff,u8 PasswordLength)
 u8 GUI_Password_Check(const u8 *Password,u8 PasswordLength)
 {
 	u8 PasswordTemp[7] = {0};
-	
-	GUI_ClearScreen();
-	
-	GUI_DisplayString(2,8+0,&EnterString_16x16[0][0],2);// “输入”
-	GUI_DisplayString(2,8+32,&AdminString_16x16[0][0],3);// “管理员”
-	GUI_DisplayString(2,8+80,&PasswordString_16x16[0][0],2);// “密码”
-
-	Voice_Play(VoiceCmd_INPUT_ADMIN_PASSWORD);
 	
 	if(NumStr_Input(PasswordTemp,6) != 6)
 	{

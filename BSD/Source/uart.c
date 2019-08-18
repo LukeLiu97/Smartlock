@@ -2,7 +2,7 @@
 ******************************************************************************
   * @file       uart.c
   * @brief      串口相关操作函数源文件
-  * @version    1.0
+  * @version    1.1
   * @date       Tue 06-08-2019
 ******************************************************************************
   */
@@ -29,8 +29,6 @@
 void USART1_Init(u32 BaudRate)
 {
 	/* GPIO配置 PA9 USART1_TX PA10 USART1_RX */
-	//时钟
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 	GPIO_InitTypeDef GPIO_InitStruct;
 	
 	GPIO_InitStruct.GPIO_Pin		= GPIO_Pin_9;
@@ -44,9 +42,6 @@ void USART1_Init(u32 BaudRate)
 	GPIO_Init(GPIOA,&GPIO_InitStruct);
 	
 	/* USART1配置 */
-	//时钟
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
-	
 	USART_InitTypeDef USART_InitStruct;
 	
 	USART_InitStruct.USART_BaudRate				= BaudRate;
@@ -71,8 +66,6 @@ void USART2_Init(u32 BaudRate)
 	/* GPIO配置 PA2 USART2_TX PA3 USART2_RX */
 	GPIO_InitTypeDef GPIO_InitStruct;
 	
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-	
 	GPIO_InitStruct.GPIO_Pin		= GPIO_Pin_2;
 	GPIO_InitStruct.GPIO_Speed		= GPIO_Speed_50MHz;
 	GPIO_InitStruct.GPIO_Mode		= GPIO_Mode_AF_PP;
@@ -84,8 +77,6 @@ void USART2_Init(u32 BaudRate)
 	GPIO_Init(GPIOA,&GPIO_InitStruct);
 	
 	/* USART2配置 */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
-	
 	USART_InitTypeDef USART_InitStruct;
 	
 	USART_InitStruct.USART_BaudRate				= BaudRate;
@@ -96,16 +87,6 @@ void USART2_Init(u32 BaudRate)
 	USART_InitStruct.USART_WordLength			= USART_WordLength_8b;
 	
 	USART_Init(USART2,&USART_InitStruct);
-	
-	
-	NVIC_InitTypeDef NVIC_InitStructure;
-	
-	/* Enable the USART2 Interrupt */
-	NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
 
 	USART_ITConfig(USART2,USART_IT_RXNE, ENABLE);
 	USART_ITConfig(USART2,USART_IT_TXE , DISABLE);
