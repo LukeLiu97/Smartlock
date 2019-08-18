@@ -22,6 +22,7 @@
 #include "gui_rfid.h"
 #include "gui_clock.h"
 #include "gui_menu.h"
+#include "gui_memory.h"
 
 
 /* Exported types ------------------------------------------------------------*/

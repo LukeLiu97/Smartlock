@@ -18,6 +18,7 @@
 #include "stm32f10x.h"
 #include "oled.h"	 
 #include "font.h"
+#include "voice.h"
 
 /* Gloabal variables ---------------------------------------------------------*/
 extern u8 ReversalFlag;	 	 

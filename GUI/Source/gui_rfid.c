@@ -126,14 +126,14 @@ void GUI_RFID_AuthorizeNewCard(void)
 		GUI_ClearScreen();
 		GUI_DisplayString(4,32+0,&EnrollString_16x16[0][0],2);
 		GUI_DisplayString(4,32+32,&SuccessString_16x16[0][0],2);
-		Voice_Play(VoiceCmd_SETTING_SUCCESS);
+//		Voice_Play(VoiceCmd_SETTING_SUCCESS);
 	}
 	else
 	{
 		GUI_ClearScreen();
 		GUI_DisplayString(4,32+0,&EnrollString_16x16[0][0],2);
 		GUI_DisplayString(4,32+32,&FailString_16x16[0][0],2);
-		Voice_Play(VoiceCmd_REPETE);
+//		Voice_Play(VoiceCmd_REPETE);
 		
 	}
 	Delay(1000);

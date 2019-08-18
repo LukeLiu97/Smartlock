@@ -25,6 +25,7 @@ typedef struct SmartLockStu_
 	u8 UserPassword[7];
 	u8 MuteMode;
 	u8 LockFlag;
+	u8 MemoryFlag;
 	u8 IDCardHash[16];
 }SmartLockStu;
 
@@ -68,9 +69,16 @@ extern u8 StringBuff[BUFF_LENGTH];
 extern u16 gTouchStatus;
 
 /* Exported constants --------------------------------------------------------*/
+
 /* Exported macro ------------------------------------------------------------*/
-#define SmartLock_OpenDoor() (SmartLock.LockFlag = 0x00)
-#define SmartLock_CloseDoor() (SmartLock.LockFlag = 0x01)
+#define SmartLock_OpenDoor() (SmartLock.LockFlag = RESET)
+#define SmartLock_CloseDoor() (SmartLock.LockFlag = SET)
+
+#define EEPROM_ENABLE_BYTE			(0x00)
+#define EEPROM_OFFSET				(0x08)
+#define EEPROM_ENABLE_FLAG			(0xAA)
+#define EEPROM_MuteMode_Addr		(EEPROM_ENABLE_BYTE + 0x01)
+#define EEPROM_UserPassword_Addr 	(EEPROM_ENABLE_BYTE + 0x02)
 
 /* Exported functions ------------------------------------------------------- */
 

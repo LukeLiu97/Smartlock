@@ -23,8 +23,7 @@
 	 
 #include "user_misc.h"
 
-#include "led.h"
-#include "voice.h"	 
+#include "led.h" 
 #include "key.h"
 
 /* Exported functions ------------------------------------------------------- */

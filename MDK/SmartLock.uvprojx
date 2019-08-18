@@ -450,6 +450,11 @@
               <FileType>1</FileType>
               <FilePath>..\GUI\Source\gui_menu.c</FilePath>
             </File>
+            <File>
+              <FileName>gui_memory.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUI\Source\gui_memory.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1132,6 +1137,11 @@
               <FileName>gui_menu.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\GUI\Source\gui_menu.c</FilePath>
+            </File>
+            <File>
+              <FileName>gui_memory.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUI\Source\gui_memory.c</FilePath>
             </File>
           </Files>
         </Group>

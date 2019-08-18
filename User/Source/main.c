@@ -24,16 +24,15 @@ static void JTAG_Disable(void);
 static void NVIC_Config(void);
 static void RCC_Config(void);
 
+static void Task_MemoryCheck(void);
 static void Task_AdminCkeck(void);
 static void Task_FingerIdentify(void);
 static void Task_RFIDIdentify(void);
 static void Task_DoorMange(void);
+static void Task_MemoryData(void);
 
 static u8 Admin_Check(void);
 
-void AT24C04_CheckWrite0(void);
-void AT24C04_CheckWrite1(void);
-void AT24C04_CheckWriteHash(void);
 
 void OLED_DrawX(void);
 /* Private functions ---------------------------------------------------------*/
@@ -99,22 +98,22 @@ int main(void)
 	
 	/* 定时器3初始化并使能其上溢中断 */
 	TIM3_Interrupt_Init();
-		
-	/* 允许全局中断 */
-	__set_PRIMASK(0); 
+	
+	/* EEPROM启用判断 */
+	Task_MemoryCheck();
 	
 	/* 管理员判定 */
 	Task_AdminCkeck();
 	
+	/* 允许全局中断 */
+	__set_PRIMASK(0); 
+	
 	/* 等待系统稳定 */
 	Delay(1000);
 	
-//	AT24C04_CheckWrite0();
-//	AT24C04_CheckWrite1();
-//	AT24C04_CheckWriteHash();
-	
 	while(1)
 	{
+		Task_MemoryData();
 		Task_FingerIdentify();
 		Task_RFIDIdentify();
 		Task_WindowMain();
@@ -122,87 +121,6 @@ int main(void)
 	}
 	
 	/* No Retval */
-}
-
-
-void AT24C04_CheckWrite0(void)
-{
-	printf("AT24C04_CheckWrite0\r\n");
-	u8 ReadTemp;
-	for(u32 i = 0;i <= 255 ;i++)
-	{
-			printf("|%4d W0 %d ",i,AT24C04_WriteByte(i,0x00));
-			printf("R0 %d %#0.2x|",AT24C04_ReadByte(i,&ReadTemp),ReadTemp);
-			printf("\r\n");
-	}
-	
-	return ;
-}
-void AT24C04_CheckWrite1(void)
-{
-	u8 ReadTemp;
-	printf("AT24C04_CheckWrite1\r\n");
-	for(u32 i = 0;i <= 255 ;i++)
-	{
-			printf("|%4d W1 %d ",i,AT24C04_WriteByte(i,0xFF));
-			printf("R1 %d %#0.2x|",AT24C04_ReadByte(i,&ReadTemp),ReadTemp);
-			printf("\r\n");
-
-	}
-	
-	return ;
-}
-
-void AT24C04_CheckWriteHash(void)
-{
-	u8 ReadTemp;
-	printf("AT24C04_CheckWriteHash\r\n");
-	for(u32 i = 0;i <= 255 ;i++)
-	{
-			printf("|%4d WN %d ",i,AT24C04_WriteByte(i,i));
-			printf("RN %d %#0.2x|",AT24C04_ReadByte(i,&ReadTemp),ReadTemp);
-			printf("\r\n");
-		
-	}
-	
-	return ;
-}
-
-void RTC_DispClock(void)
-{
-	static TimeStu ZeroTime = {2019,8,4,8,0,0,0};
-	
-	TimeStu Time = {0};
-	
-	if(TimeDisplay == 1)
-	{
-		Read_RTCTime(&Time);
-		
-		if(Time.Year != ZeroTime.Year)
-		{
-			Set_RTCTime(&ZeroTime);
-		}
-		else
-		{
-		}
-		GUI_ClearPart(0,2,0,128);
-		
-		GUI_DisplayNumber(0,0,Time.Year,2,2);
-		GUI_DisplayNumber(0,16,Time.Month,2,2);
-		GUI_DisplayNumber(0,32,Time.Date,2,2);
-		GUI_DisplayNumber(0,64,Time.Hour,2,2);
-		GUI_DisplayNumber(0,88,Time.Minute,2,2);
-		GUI_DisplayNumber(0,112,Time.Second,2,2);
-		
-		TimeDisplay = 0;
-		
-		Delay(500);
-	}
-	else
-	{
-		
-	}
-	
 }
 
 static void JTAG_Disable(void)
@@ -289,6 +207,33 @@ static void RCC_Config(void)
 	return ;
 }
 
+static void Task_MemoryCheck(void)
+{
+	u8 ReadData1,ReadData2;
+	
+	if(AT24C04_ReadBuff(EEPROM_ENABLE_BYTE,&ReadData1,1) != 0 || AT24C04_ReadBuff(EEPROM_ENABLE_BYTE + EEPROM_OFFSET,&ReadData2,1) != 0)
+	{
+		SmartLock.MemoryFlag = RESET;
+	}
+	else
+	{
+		/* 数据不一致 */
+		if(ReadData1 != ReadData2 || ReadData1 != EEPROM_ENABLE_FLAG)
+		{
+			SmartLock.MemoryFlag = RESET;
+		}
+		else
+		{
+			SmartLock.MemoryFlag = SET;
+		}
+	}
+	
+#ifdef DEBUG
+	printf("EEPROM Enable = %#x\r\n",SmartLock.MemoryFlag);
+#endif
+	return ;
+}
+
 static void Task_AdminCkeck(void)
 {
 	if(Admin_Check() == 1)
@@ -350,7 +295,37 @@ static void Task_DoorMange(void)
 	{
 		
 	}
+}
+
+static void Task_MemoryData(void)
+{
 	
+	u8 Data[16] = {0};
+	
+	if(SmartLock.MemoryFlag == SET)
+	{
+		if(AT24C04_ReadBuff(EEPROM_ENABLE_BYTE,Data,16) == 0)
+		{
+			if(HashCompare(Data,Data+EEPROM_OFFSET,EEPROM_OFFSET) == 0)
+			{
+				SmartLock.MuteMode = *(Data+EEPROM_MuteMode_Addr);
+				memcpy(SmartLock.UserPassword,Data+EEPROM_UserPassword_Addr,sizeof(SmartLock.UserPassword[0]) * 6);
+			}
+			else
+			{
+				SmartLock.MemoryFlag = RESET;
+			}
+		}
+		else
+		{
+		}
+	}
+	else
+	{
+		
+	}
+	
+	return ;
 }
 
 static u8 Admin_Check(void)

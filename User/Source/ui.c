@@ -199,6 +199,9 @@ void SubMenu_Change(u32 *NextSubMenu,u8 MenuCurrentPlace)
 		case SubMenu_ClockSetting-1:
 			*NextSubMenu = SubMenu_ClockSetting;
 			break;
+		case SubMenu_MemorySetting-1:
+			*NextSubMenu = SubMenu_MemorySetting;
+			break;
 		default:
 			*NextSubMenu = SubMenu_Start;
 	}
@@ -207,19 +210,20 @@ void SubMenu_Change(u32 *NextSubMenu,u8 MenuCurrentPlace)
 void Menu_Start(u32 *LastMenu)
 {
 	// 字符串顺序关联用户设置菜单顺序，这里使用的是设置菜单子菜单枚举结构体的顺序
-	const u8 *Str[5] = 
+	const u8 *Str[6] = 
 	{
 		&(MenuString1_16x16[0][0]),// “修改用户密码”
 		&(MenuString2_16x16[0][0]),// “声音模式”
 		&(MenuString3_16x16[0][0]),// “登记指纹”
 		&(MenuString4_16x16[0][0]),// “登记卡片”
 		&(MenuString5_16x16[0][0]),// “时钟设置”
+		&(MenuString6_16x16[0][0]),// “存储管理”
 	};
-	const u8 StrLenArray[5] = {6,4,4,4,4};
+	const u8 StrLenArray[6] = {6,4,4,4,4,4};
 	
-	static u8 CurrentPlace[5] = {0,1,2,3,4};
+	static u8 CurrentPlace[6] = {0,1,2,3,4,5};
 	
-	switch (Menu_Move(CurrentPlace,5))
+	switch (Menu_Move(CurrentPlace,6))
 	{
 		case MenuPlace_Check:
 			SubMenu_Change(LastMenu,CurrentPlace[1]);
@@ -254,19 +258,6 @@ void Menu_Start(u32 *LastMenu)
 	return ;
 }
 
-void Mute_Setting(u8 MenuElmt)
-{
-	// 菜单第一项是静音
-	if(MenuElmt == 0)
-	{
-		SmartLock.MuteMode = 1;
-	}
-	else
-	{
-		SmartLock.MuteMode = 0;
-	}
-}
-
 
 void Menu_PasswordChange(u32 *LastMenu)
 {
@@ -278,7 +269,14 @@ void Menu_PasswordChange(u32 *LastMenu)
 	
 	if(GUI_Password_Check(SmartLock.UserPassword,6) == 0)
 	{
-		GUI_Password_Enroll(SmartLock.UserPassword,6);
+		if(GUI_Password_Enroll(SmartLock.UserPassword,6)==0)
+		{
+			AT24C04_SaveSmartLockData();
+		}
+		else
+		{
+		}
+		
 	}
 	else
 	{
@@ -291,6 +289,20 @@ void Menu_PasswordChange(u32 *LastMenu)
 	*LastMenu = SubMenu_Start;
 }
 
+void Mute_Setting(u8 MenuElmt)
+{
+	// 菜单第一项是静音
+	if(MenuElmt == 0)
+	{
+		SmartLock.MuteMode = 1;
+		AT24C04_SaveSmartLockData();
+	}
+	else
+	{
+		SmartLock.MuteMode = 0;
+		AT24C04_SaveSmartLockData();
+	}
+}
 
 void Menu_MuteSetting(u32 *LastMenu)
 {
@@ -528,6 +540,66 @@ void Menu_IDCardMange(u32 *LastMenu)
 	return ;
 }
 
+
+void Memory_Setting(u8 MenuElmt)
+{
+	// 菜单第一项是删除
+	if(MenuElmt == 0)
+	{
+		GUI_Memory_Clear();
+	}
+	else
+	{
+		GUI_Memory_Enable();
+	}
+}
+
+void Menu_MemorySetting(u32 *LastMenu)
+{
+	const u8 *Str[2] = 
+	{
+		&(DeleteString_16x16[0][0]),// “删除”
+		&(EnableString_16x16[0][0]) // “启用”
+	};
+	const u8 StrLenArray[2] = {2,2};
+	
+	static u8 CurrentPlace[2] = {0,1};
+	
+	switch (Menu_Move(CurrentPlace,2))
+	{
+		case MenuPlace_Check:
+			Memory_Setting(CurrentPlace[0]);
+			GUI_ClearScreen();
+			break;
+		case MenuPlace_Back:
+			*LastMenu = SubMenu_Start;
+			GUI_ClearScreen();
+			break;
+		case MenuPlace_Shift:
+			GUI_ClearScreen();
+			break;
+		default:
+			break;
+	}
+	
+	OLED_ShowString(0,2,32,&MenuString6_16x16[0][0],4); // 居中显示“存储管理”
+	
+	ReversalFlag = 1;
+	OLED_ShowString(CurrentPlace[0] * 2 + 2,2,0,Str[CurrentPlace[0]],StrLenArray[CurrentPlace[0]]);
+	ReversalFlag = 0;
+	OLED_ShowString(CurrentPlace[1] * 2 + 2,2,0,Str[CurrentPlace[1]],StrLenArray[CurrentPlace[1]]);
+	
+	if(*LastMenu != SubMenu_MemorySetting)
+	{
+		GUI_ClearScreen();
+	}
+	else
+	{
+	}
+	
+	return ;
+}
+
 void Window_AdminMode(void)
 {
 
@@ -598,6 +670,9 @@ void Window_SettingMode(void)
 			break;
 		case SubMenu_ClockSetting:
 			Menu_ClockSetting(&CurrentMenu);
+			break;
+		case SubMenu_MemorySetting:
+			Menu_MemorySetting(&CurrentMenu);
 			break;
 		default:
 			CurrentMenu = SubMenu_Start;
