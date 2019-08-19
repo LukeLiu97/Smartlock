@@ -12,25 +12,26 @@
 #define __GUI_FINGER_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C"
+{
 #endif
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x.h" // 引入数据类型定义	 
+#include "stm32f10x.h" // 引入数据类型定义
 
 #include "gui_baseelmt.h"
 #include "time.h"
-	 
+
 #include "finger.h"
 
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+    /* Exported types ------------------------------------------------------------*/
+    /* Exported constants --------------------------------------------------------*/
+    /* Exported macro ------------------------------------------------------------*/
+    /* Exported functions ------------------------------------------------------- */
 
-void GUI_Finger_EnrollNewUser(void);
-void GUI_Finger_EraseAllUser(void);
-void GUI_Finger_Compare(void);
-	 
+    void GUI_Finger_EnrollNewUser(void);
+    void GUI_Finger_EraseAllUser(void);
+    void GUI_Finger_Compare(void);
+
 #ifdef __cplusplus
 }
 #endif

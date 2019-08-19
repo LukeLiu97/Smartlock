@@ -12,7 +12,8 @@
 #define __LED_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C"
+{
 #endif
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
@@ -23,15 +24,15 @@
 #define LED3_OFF() (GPIO_SetBits(GPIOB, GPIO_Pin_6))
 #define LED3_ON() (GPIO_ResetBits(GPIOB, GPIO_Pin_6))
 
-#define LED3_OR() (GPIOB->ODR ^= (0x1 <<  6))
+#define LED3_OR() (GPIOB->ODR ^= (0x1 << 6))
 
 #define LED2_OFF() (GPIO_SetBits(GPIOB, GPIO_Pin_8))
 #define LED2_ON() (GPIO_ResetBits(GPIOB, GPIO_Pin_8))
-	 
-#define LED2_OR() (GPIOB->ODR ^= (0x1 <<  8))	 
 
-/* Exported functions ------------------------------------------------------- */
-void LED_Init(void);
+#define LED2_OR() (GPIOB->ODR ^= (0x1 << 8))
+
+    /* Exported functions ------------------------------------------------------- */
+    void LED_Init(void);
 
 #ifdef __cplusplus
 }

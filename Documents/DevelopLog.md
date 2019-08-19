@@ -28,9 +28,21 @@ Smartlock_v1.3
         OLED_CS PA15
         > 与JTAG功能冲突，需要重映射
 
+        MG200_PWR PB9
+        MG200_DETECT PC13
+
+        RFID_CS PA6  
+        RFID_RST PA7
+
+        MOTOR_IA PA5 
+        MOTOR_IB PA4
+
     - UART
         USART1_TX PA9
         USART1_RX PA10
+
+        USART2_TX PA2
+        USART2_RX PA3
 
     - SPI
         SPI2_SCLK PB13
@@ -49,6 +61,15 @@ Smartlock_v1.3
     驱动为SSD1306,支持6800、8080、三线或四线SPI以及I2C通行
     此处使用了四线SPI
 
+- MG200
+    指纹模块，使用UART二次封装后的数据包。PWR引脚控制使能，DETECT在手指按下输出低电平。
+
+- RC522
+    RFID 模块，使用SPI2通讯，
+
+- EEPROM AT24C04
+    容量为512Byte,使用模拟IIC
+
 ### Softwave
 使用GPIO的输出功能检查LED2&LED3工作状态
 为便于调试，添加串口功能
@@ -56,6 +77,22 @@ Smartlock_v1.3
 
 ## Update
 ---
+- ver 2.3
+    添加看门狗以及低功耗
+- ver 2.2
+    添加用户数据掉电不丢失功能
+- ver 2.1
+    添加实时时钟功能
+- ver 2.0
+    优化程序
+- ver 1.1
+    添加RFID模块实现门卡解锁
+- ver 1.0
+    添加电机驱动模块实现门锁管理
+- ver 0.8
+    添加指纹模块驱动
+- ver 0.7
+    添加简易的GUI实现图形化人机交互
 - ver 0.6
     添加了OLED驱动程序，使用SPI通讯
     OLED_CS引脚与JTAG引脚冲突，同样进行了重映射

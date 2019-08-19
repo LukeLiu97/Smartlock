@@ -215,9 +215,13 @@ void TIM3_IRQHandler(void)
 		/* Intertupt task */
 		LED2_OR();
 		
+		/* Reload IWDG counter */
+		IWDG_ReloadCounter();  
+		
 		if(UnBusy_Count > 12 && CurrentWindowMode != WindowMode_Setting)
 		{
 			CurrentWindowMode = WindowMode_AllClear;
+			SmartLock_CloseDoor();
 						
 			if(UnBusy_Count > 30)
 			{
@@ -287,6 +291,7 @@ void RTC_IRQHandler(void)
 	RTC_ClearITPendingBit(RTC_IT_SEC);
 
 	/* Interrupt Task */
+		
 	if(Count >= 3)
 	{
 		Count = 0;

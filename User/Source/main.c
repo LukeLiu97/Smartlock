@@ -2,9 +2,9 @@
 ******************************************************************************
   * @file       main.c
   * @brief      主程序源文件
-  * @version    1.3
+  * @version    2.3
   * @date       Aug-10-2019 Sat
-  * @update     添加EEPROM实现用户设置掉电保存
+  * @update     添加指纹解锁功能
 ******************************************************************************
   */
 
@@ -32,7 +32,7 @@ static void Task_DoorMange(void);
 static void Task_MemoryData(void);
 
 static u8 Admin_Check(void);
-
+static void IWWG_Init(void);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -67,6 +67,8 @@ int main(void)
 
 	printf("\r\nDebug mode\r\n");
 #endif		
+    /* UART2 初始化 */
+	USART2_Init(115200);
 
 	/* 初始化声音生成模块 */
 	VoiceModule_Init();
@@ -104,11 +106,11 @@ int main(void)
 	/* 管理员判定 */
 	Task_AdminCkeck();
 	
+	/* 初始化独立看门狗 */
+	IWWG_Init();
+	
 	/* 允许全局中断 */
 	__set_PRIMASK(0); 
-	
-	/* 管理员判定 */
-	Task_AdminCkeck();
 	
 	/* 等待系统稳定 */
 	Delay(1000);
@@ -120,6 +122,7 @@ int main(void)
 		Task_RFIDIdentify();
 		Task_WindowMain();
 		Task_DoorMange();
+		__WFI();
 	}
 	
 	/* No Retval */
@@ -206,7 +209,6 @@ static void RCC_Config(void)
 	/* TIM4 clock enable */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 	
-
 	return ;
 }
 
@@ -298,7 +300,6 @@ static void Task_DoorMange(void)
 	{
 		
 	}
-
 }
 
 static void Task_MemoryData(void)
@@ -330,7 +331,6 @@ static void Task_MemoryData(void)
 	}
 	
 	return ;
-
 }
 
 static u8 Admin_Check(void)
@@ -399,6 +399,28 @@ static u8 Admin_Check(void)
 	{
 		return 1;
 	}
+}
+
+static void IWWG_Init(void)
+{
+	__IO uint32_t LsiFreq = 40000;
+	
+	/* IWDG timeout equal to 250 ms (the timeout may varies due to LSI frequency
+		dispersion) */
+	/* Enable write access to IWDG_PR and IWDG_RLR registers */
+	IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
+
+	/* IWDG counter clock: LSI/256 */
+	IWDG_SetPrescaler(IWDG_Prescaler_256);
+	
+  /* Set counter reload value to obtain 250ms IWDG TimeOut. */
+	IWDG_SetReload(LsiFreq/32);
+
+	/* Reload IWDG counter */
+	IWDG_ReloadCounter();
+
+	/* Enable IWDG (the LSI oscillator will be enabled by hardware) */
+	IWDG_Enable();
 }
 
 /* Exported functions --------------------------------------------------------*/

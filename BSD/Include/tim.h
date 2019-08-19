@@ -12,20 +12,21 @@
 #define __TIM_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C"
+{
 #endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+    /* Exported types ------------------------------------------------------------*/
+    /* Exported constants --------------------------------------------------------*/
+    /* Exported macro ------------------------------------------------------------*/
+    /* Exported functions ------------------------------------------------------- */
 
-void TIM2_Delay_ms(u16 ms);
-void TIM3_Interrupt_Init(void);
-void TIM4_Delay_us(u16 us);
+    void TIM2_Delay_ms(u16 ms);
+    void TIM3_Interrupt_Init(void);
+    void TIM4_Delay_us(u16 us);
 
 #ifdef __cplusplus
 }

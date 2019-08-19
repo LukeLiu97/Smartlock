@@ -12,7 +12,8 @@
 #define __GUI_MEMORY_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C"
+{
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -21,12 +22,12 @@
 #include "global.h"
 #include "at24c04.h"
 
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-void GUI_Memory_Clear(void);
-void GUI_Memory_Enable(void);
+    /* Exported types ------------------------------------------------------------*/
+    /* Exported constants --------------------------------------------------------*/
+    /* Exported macro ------------------------------------------------------------*/
+    /* Exported functions ------------------------------------------------------- */
+    void GUI_Memory_Clear(void);
+    void GUI_Memory_Enable(void);
 
 #ifdef __cplusplus
 }

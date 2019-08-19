@@ -12,31 +12,32 @@
 #define __GUI_PASSWORD_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C"
+{
 #endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 #include "stdio.h"
-	 
+
 #include "gui_baseelmt.h"
-	 
+
 #include "user_misc.h"
 
-#include "led.h" 
+#include "led.h"
 #include "key.h"
 
-/* Exported functions ------------------------------------------------------- */
+    /* Exported functions ------------------------------------------------------- */
 
-extern u8 Key_Scan(void);
+    extern u8 Key_Scan(void);
 
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+    /* Exported types ------------------------------------------------------------*/
+    /* Exported constants --------------------------------------------------------*/
+    /* Exported macro ------------------------------------------------------------*/
+    /* Exported functions ------------------------------------------------------- */
 
-u8 GUI_Password_Enroll(u8 *PasswordBuff,u8 PasswordLength);
-u8 GUI_Password_Check(const u8 *Password,u8 PasswordLength);
+    u8 GUI_Password_Enroll(u8 *PasswordBuff, u8 PasswordLength);
+    u8 GUI_Password_Check(const u8 *Password, u8 PasswordLength);
 
 #ifdef __cplusplus
 }
