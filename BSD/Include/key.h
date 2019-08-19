@@ -12,25 +12,26 @@
 #define __KEY_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C"
+{
 #endif
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 
 //#ifdef __MPR121_H
 #include "mpr121.h"
-//#endif	 
+//#endif
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-#define MPR_IRQ() (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_3))
+#define MPR_IRQ() (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_3))
 
-/* Exported functions ------------------------------------------------------- */
-void Key_Init(void);
-u8 Key_Scan(void);
-void EXTI3_Init(void);
-void EXTI3_Disable(void);
+    /* Exported functions ------------------------------------------------------- */
+    void Key_Init(void);
+    u8 Key_Scan(void);
+    void EXTI3_Init(void);
+    void EXTI3_Disable(void);
 
 #ifdef __cplusplus
 }

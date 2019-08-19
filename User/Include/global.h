@@ -12,61 +12,61 @@
 #define __GLOBAL_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C"
+{
 #endif
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 
+    /* Exported types ------------------------------------------------------------*/
+    typedef struct SmartLockStu_
+    {
+        u8 AdminPassword[7];
+        u8 UserPassword[7];
+        u8 MuteMode;
+        u8 LockFlag;
+        u8 MemoryFlag;
+        u8 IDCardHash[16];
+    } SmartLockStu;
 
-/* Exported types ------------------------------------------------------------*/
-typedef struct SmartLockStu_
-{
-	u8 AdminPassword[7];
-	u8 UserPassword[7];
-	u8 MuteMode;
-	u8 LockFlag;
-	u8 MemoryFlag;
-	u8 IDCardHash[16];
-}SmartLockStu;
+    typedef struct TimeStu_
+    {
+        u32 Year;
+        u8 Month;
+        u8 Day;
+        u8 Date;
+        u8 Hour;
+        u8 Minute;
+        u8 Second;
+    } TimeStu;
 
-typedef struct TimeStu_
-{
-	u32 Year;
-	u8 Month;
-	u8 Day;
-	u8 Date;
-	u8 Hour;
-	u8 Minute;
-	u8 Second;
-}TimeStu;
+    typedef struct FingerPackStu_
+    {
+        u8 Data[8];
+        u8 Count;
+        u8 Over;
+    } FingerPackStu;
 
-typedef struct FingerPackStu_
-{
-	u8 Data[8];
-	u8 Count;
-	u8 Over;
-}FingerPackStu;
+    /* Extern variables ----------------------------------------------------------*/
+    extern u8 ReversalFlag;
 
-/* Extern variables ----------------------------------------------------------*/
-extern u8 ReversalFlag;	 
+    extern u8 CurrentWindowMode;
 
-extern u8 CurrentWindowMode;
+    extern u8 CurrentUserMode;
 
-extern u8 CurrentUserMode;
+    extern SmartLockStu SmartLock;
 
-extern SmartLockStu SmartLock;
+    extern FingerPackStu FingerPack;
 
-extern FingerPackStu FingerPack;
+    extern TimeStu UserTime;
 
-extern TimeStu UserTime;
+    extern u32 UnBusy_Count;
 
-extern u32 UnBusy_Count;
+    extern u32 TimeDisplay;
 
-extern u32 TimeDisplay;
-
-#define BUFF_LENGTH 256  // 定义输入缓冲区长度
-extern u8 StringBuff[BUFF_LENGTH];
-extern u16 gTouchStatus;
+#define BUFF_LENGTH 256 // 定义输入缓冲区长度
+    extern u8 StringBuff[BUFF_LENGTH];
+    extern u16 gTouchStatus;
 
 /* Exported constants --------------------------------------------------------*/
 
@@ -74,13 +74,13 @@ extern u16 gTouchStatus;
 #define SmartLock_OpenDoor() (SmartLock.LockFlag = RESET)
 #define SmartLock_CloseDoor() (SmartLock.LockFlag = SET)
 
-#define EEPROM_ENABLE_BYTE			(0x00)
-#define EEPROM_OFFSET				(0x08)
-#define EEPROM_ENABLE_FLAG			(0xAA)
-#define EEPROM_MuteMode_Addr		(EEPROM_ENABLE_BYTE + 0x01)
-#define EEPROM_UserPassword_Addr 	(EEPROM_ENABLE_BYTE + 0x02)
+#define EEPROM_ENABLE_BYTE (0x00)
+#define EEPROM_OFFSET (0x08)
+#define EEPROM_ENABLE_FLAG (0xAA)
+#define EEPROM_MuteMode_Addr (EEPROM_ENABLE_BYTE + 0x01)
+#define EEPROM_UserPassword_Addr (EEPROM_ENABLE_BYTE + 0x02)
 
-/* Exported functions ------------------------------------------------------- */
+    /* Exported functions ------------------------------------------------------- */
 
 #ifdef __cplusplus
 }

@@ -12,7 +12,8 @@
 #define __UI_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C"
+{
 #endif
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
@@ -32,45 +33,45 @@
 #include "font.h"
 #include "tim.h"
 #include "motor.h"
-	 
-/* Exported types ------------------------------------------------------------*/
-extern SmartLockStu SmartLock;
 
-/* Exported constants --------------------------------------------------------*/
-typedef enum
-{
-	WindowMode_AllClear = 0,
-	WindowMode_Admin	= 1,
-	WindowMode_User		= 2,
-	WindowMode_Setting	= 3
-}WindowMode_TypeDef;
+    /* Exported types ------------------------------------------------------------*/
+    extern SmartLockStu SmartLock;
 
-typedef enum
-{
-	SubMenu_Start 			= 0,
-	SubMenu_PasswordChange	= 1,
-	SubMenu_MuteSetting		= 2,
-	SubMenu_FingerMange		= 3,
-	SubMenu_IDCardMange		= 4,
-	SubMenu_ClockSetting	= 5,
-	SubMenu_MemorySetting	= 6,
-}SubMenu_TypeDef;
+    /* Exported constants --------------------------------------------------------*/
+    typedef enum
+    {
+        WindowMode_AllClear = 0,
+        WindowMode_Admin = 1,
+        WindowMode_User = 2,
+        WindowMode_Setting = 3
+    } WindowMode_TypeDef;
 
-typedef enum
-{
-	UserSubMode_Password 	= 0,
-	UserSubMode_Finger		= 1,
-	UserSubMode_RFID		= 2,
-}UserSubMode_TypeDef;
+    typedef enum
+    {
+        SubMenu_Start = 0,
+        SubMenu_PasswordChange = 1,
+        SubMenu_MuteSetting = 2,
+        SubMenu_FingerMange = 3,
+        SubMenu_IDCardMange = 4,
+        SubMenu_ClockSetting = 5,
+        SubMenu_MemorySetting = 6,
+    } SubMenu_TypeDef;
 
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+    typedef enum
+    {
+        UserSubMode_Password = 0,
+        UserSubMode_Finger = 1,
+        UserSubMode_RFID = 2,
+    } UserSubMode_TypeDef;
 
-void Task_WindowMain(void);
+    /* Exported macro ------------------------------------------------------------*/
+    /* Exported functions ------------------------------------------------------- */
 
-/* Extern variables ----------------------------------------------------------*/
-extern u16 gTouchStatus;
-	 
+    void Task_WindowMain(void);
+
+    /* Extern variables ----------------------------------------------------------*/
+    extern u16 gTouchStatus;
+
 #ifdef __cplusplus
 }
 #endif

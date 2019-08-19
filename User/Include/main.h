@@ -13,7 +13,8 @@
 #define __MAIN_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C"
+{
 #endif
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
@@ -21,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "global.h"
-	 
+
 #include "led.h"
 #include "time.h"
 #include "uart.h"
@@ -39,23 +40,20 @@
 #include "at24c04.h"
 #include "rtc.h"
 
-#include "gui.h"	 
+#include "gui.h"
 #include "ui.h"
 
-	 
-/* Exported types ------------------------------------------------------------*/
+    /* Exported types ------------------------------------------------------------*/
 
+    /* Exported constants --------------------------------------------------------*/
 
-/* Exported constants --------------------------------------------------------*/
+    /* Exported macro ------------------------------------------------------------*/
 
-/* Exported macro ------------------------------------------------------------*/
+    /* Exported functions ------------------------------------------------------- */
 
-/* Exported functions ------------------------------------------------------- */
+    u8 Admin_Check(void);
 
-u8 Admin_Check(void);
-
-
-void RTC_DispClock(void);
+    void RTC_DispClock(void);
 
 #ifdef __cplusplus
 }
