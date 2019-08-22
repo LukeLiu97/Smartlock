@@ -4,4 +4,4 @@
 Project was based on STM32 Standard Library 3.5.0
 
 ## Contributor
-WakaXiao BruceYH
+LukeLiu97 WakaXiao BruceYH
